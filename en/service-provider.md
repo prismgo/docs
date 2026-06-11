@@ -22,7 +22,7 @@ If you would like to learn more about how Prismgo handles requests and works int
 
 ## Writing Service Providers
 
-All service providers implement the `ServiceProvider` interface from `prismgo/contracts/provider`. Most service providers contain a `Register` and a `Boot` method. Within the `Register` method, you should **only bind things into the [service container](/docs/{{version}}/container)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `Register` method.
+All service providers implement the `ServiceProvider` interface from `github.com/prismgo/framework/contracts/provider`. Most service providers contain a `Register` and a `Boot` method. Within the `Register` method, you should **only bind things into the [service container](/docs/{{version}}/container)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `Register` method.
 
 Let's create a basic service provider. The `Register` method is where you bind your services into the container, and the `Boot` method is where you perform post-registration tasks:
 
@@ -190,7 +190,7 @@ All service providers are registered in the `bootstrap/provider.go` file. This f
 package bootstrap
 
 import (
-    appproviders "prismgo/app/providers"
+    appproviders "yourapp/app/providers"
     "github.com/prismgo/framework/provider"
 )
 
@@ -219,7 +219,7 @@ Each provider is identified within the repository by a unique identity string. I
 func (HorizonServiceProvider) Name() string { return "app.horizon" }
 
 // Implicit identity — uses the Go type path
-// "prismgo/app/providers.AppServiceProvider"
+// "yourapp/app/providers.AppServiceProvider"
 ```
 
 If the same identity is registered twice, the second registration is silently ignored and the first provider instance is reused.

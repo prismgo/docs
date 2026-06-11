@@ -30,7 +30,7 @@
 
 ## 简介
 
-`prismgo/timer` 提供了一套 Laravel Scheduler 风格的定时任务调度系统。开发者可以通过链式调用将项目内的命令或 Go 闭包注册为周期任务，由调度器在后台自动执行。
+`github.com/prismgo/framework/timer` 提供了一套 Laravel Scheduler 风格的定时任务调度系统。开发者可以通过链式调用将项目内的命令或 Go 闭包注册为周期任务，由调度器在后台自动执行。
 
 **适用场景：**
 
@@ -158,14 +158,14 @@ user=www
 
 ## 配置
 
-`prismgo/timer` 本身不需要额外配置文件。调度器的行为由以下环境决定：
+`github.com/prismgo/framework/timer` 本身不需要额外配置文件。调度器的行为由以下环境决定：
 
 | 配置项 | 来源 | 说明 |
 | --- | --- | --- |
 | **时区** | `time.Local`（操作系统时区） | 所有日历调度（如 `DailyAt("18:30")`）均以系统本地时间计算命中时刻 |
 | **调试日志** | `config.GetBool("app.debug", false)` | 设为 `true` 时，每次任务成功执行后会输出 `[schedule] task xxx done` 日志 |
-| **缓存驱动** | `prismgo/cache` 默认 store | `WithoutOverlapping()` 的防重叠锁依赖此缓存驱动。如需跨进程防重叠，请将默认 cache store 配置为 Redis 等共享后端 |
-| **异常上报** | `prismgo/exception` 容器绑定 | 任务返回 error 或 panic 时自动通过 `exception.Report` 上报；不绑定则静默忽略 |
+| **缓存驱动** | `github.com/prismgo/framework/cache` 默认 store | `WithoutOverlapping()` 的防重叠锁依赖此缓存驱动。如需跨进程防重叠，请将默认 cache store 配置为 Redis 等共享后端 |
+| **异常上报** | `github.com/prismgo/framework/exception` 容器绑定 | 任务返回 error 或 panic 时自动通过 `exception.Report` 上报；不绑定则静默忽略 |
 
 调度器启动时建议输出任务清单，便于运维确认：
 
@@ -575,7 +575,7 @@ func (t *ScheduledTask) WithoutOverlapping(expiresAt ...int) *ScheduledTask
 
 **工作原理：**
 
-1. 每次执行前通过 `prismgo/cache` 默认 store 尝试获取分布式锁
+1. 每次执行前通过 `github.com/prismgo/framework/cache` 默认 store 尝试获取分布式锁
 2. 锁 key 基于任务名称生成：`Command` 注册的使用命令名，`Call` 注册的需显式设置 `Name` 确保多进程下稳定
 3. 如果上一次任务仍持有锁，本次触发直接跳过，不等待也不调用任务函数
 4. 任务执行结束后自动释放锁
@@ -587,7 +587,7 @@ s.Command("emails:send").EveryMinute().WithoutOverlapping(10)    // 10 分钟过
 s.Call(fn).Name("dashboard_rebuild").EveryTenMinutes().WithoutOverlapping()
 ```
 
-> **注意：** 跨进程防重叠需要将 `prismgo/cache` 默认 store 配置为 Redis 等共享后端；使用内存驱动时仅对当前进程有效。
+> **注意：** 跨进程防重叠需要将 `github.com/prismgo/framework/cache` 默认 store 配置为 Redis 等共享后端；使用内存驱动时仅对当前进程有效。
 
 ## 启动与停止调度器
 
@@ -670,13 +670,13 @@ logger.Infof("scheduled tasks:\n%s", s.Summary())
 
 ### 任务返回 error
 
-- 通过 `prismgo/exception` 的 `Report` 上报，携带 `task`、`status`（500）、`component`（`"cron"`）、`duration_ms` 等上下文
+- 通过 `github.com/prismgo/framework/exception` 的 `Report` 上报，携带 `task`、`status`（500）、`component`（`"cron"`）、`duration_ms` 等上下文
 - **不会**停止调度器，不影响其他任务
 - 下一轮命中时间到达后，任务仍会继续执行
 
 ### 任务 panic
 
-- goroutine 内通过 `prismgo/routine` 捕获 panic
+- goroutine 内通过 `github.com/prismgo/framework/routine` 捕获 panic
 - 同样通过 `exception.Report` 上报
 - 任务循环继续，后续触发不受影响
 
@@ -687,7 +687,7 @@ logger.Infof("scheduled tasks:\n%s", s.Summary())
 
 ### 异常上报依赖
 
-处理 error 和 panic 上报依赖 `prismgo/exception` 包的 Reporter 绑定。测试环境中可注入自定义 Reporter 验证行为，生产环境应确保 Reporter 已正确配置。
+处理 error 和 panic 上报依赖 `github.com/prismgo/framework/exception` 包的 Reporter 绑定。测试环境中可注入自定义 Reporter 验证行为，生产环境应确保 Reporter 已正确配置。
 
 ## 执行模型
 
@@ -798,7 +798,7 @@ type ResolvedCommand struct {
 | `Fn` | `func(context.Context) error` | 调度器最终执行的函数 |
 | `Description` | `string` | 任务说明，出现在 `Summary()` 输出中 |
 
-`ResolvedCommand` 是命令系统与调度器之间的桥接结果，让 `prismgo/timer` 不依赖具体命令框架。调度器只关心"拿到一个可执行函数"，命令注册、参数解析、依赖注入由外层 resolver 完成。
+`ResolvedCommand` 是命令系统与调度器之间的桥接结果，让 `github.com/prismgo/framework/timer` 不依赖具体命令框架。调度器只关心"拿到一个可执行函数"，命令注册、参数解析、依赖注入由外层 resolver 完成。
 
 ### CommandResolver
 

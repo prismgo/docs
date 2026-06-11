@@ -35,7 +35,7 @@
 
 ## Introduction
 
-`prismgo/cookie` provides Laravel-style HTTP cookie creation, reading, queuing, expiration, and deletion. It is designed for framework-level use, maintaining Go's explicit error returns while preserving Laravel's core concepts such as `Make`, `Forever`, `Queue`, `Expire`, and `Forget`.
+`github.com/prismgo/framework/cookie` provides Laravel-style HTTP cookie creation, reading, queuing, expiration, and deletion. It is designed for framework-level use, maintaining Go's explicit error returns while preserving Laravel's core concepts such as `Make`, `Forever`, `Queue`, `Expire`, and `Forget`.
 
 Core design principles:
 
@@ -61,7 +61,7 @@ Core design principles:
 `cookie.ServiceProvider` is registered as a framework default provider. During the `Register` phase, it binds a lazy singleton factory for `cookie.queue` in the container. Request-level queues are created by middleware during the request lifecycle and do not depend on this singleton.
 
 ```go
-// Registered in prismgo/provider/provider.go
+// Enable it in the application's provider list
 cookiepkg.ServiceProvider{}
 ```
 
@@ -69,7 +69,7 @@ cookiepkg.ServiceProvider{}
 
 #### QueuedCookies
 
-`prismgo/http/middleware.QueuedCookies()` installs a per-request cookie queue for each Gin request and flushes all queued cookies to the response after the handler has run.
+`github.com/prismgo/framework/http/middleware.QueuedCookies()` installs a per-request cookie queue for each Gin request and flushes all queued cookies to the response after the handler has run.
 
 ```go
 engine.Use(middleware.QueuedCookies())
@@ -343,7 +343,7 @@ Selection guidelines:
 
 ### Security Contract Interfaces
 
-Cookie signing and encryption capabilities are defined by interfaces in the `prismgo/contracts/cookie` package:
+Cookie signing and encryption capabilities are defined by interfaces in the `github.com/prismgo/framework/contracts/cookie` package:
 
 ```go
 // Signer handles cookie value signing and verification

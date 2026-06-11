@@ -35,7 +35,7 @@
 
 ## 简介
 
-`prismgo/cookie` 提供 Laravel 风格的 HTTP Cookie 创建、读取、排队、过期和删除能力。它面向框架层使用，默认保持 Go 的显式错误返回，同时保留 Laravel 文档中的 `Make`、`Forever`、`Queue`、`Expire`、`Forget` 等核心概念。
+`github.com/prismgo/framework/cookie` 提供 Laravel 风格的 HTTP Cookie 创建、读取、排队、过期和删除能力。它面向框架层使用，默认保持 Go 的显式错误返回，同时保留 Laravel 文档中的 `Make`、`Forever`、`Queue`、`Expire`、`Forget` 等核心概念。
 
 核心设计思路：
 
@@ -61,7 +61,7 @@
 `cookie.ServiceProvider` 作为框架默认 provider 注册，在 `Register` 阶段向容器绑定 `cookie.queue` 的懒加载单例工厂。请求级队列由中间件在请求生命周期内创建，不依赖此单例。
 
 ```go
-// prismgo/provider/provider.go 中注册
+// 在应用的 provider 注册列表中启用
 cookiepkg.ServiceProvider{}
 ```
 
@@ -69,7 +69,7 @@ cookiepkg.ServiceProvider{}
 
 #### QueuedCookies
 
-`prismgo/http/middleware.QueuedCookies()` 为每个 Gin 请求安装请求级 cookie 队列，在 handler 执行完毕后统一将排队的 cookie 写入响应。
+`github.com/prismgo/framework/http/middleware.QueuedCookies()` 为每个 Gin 请求安装请求级 cookie 队列，在 handler 执行完毕后统一将排队的 cookie 写入响应。
 
 ```go
 engine.Use(middleware.QueuedCookies())
@@ -343,7 +343,7 @@ if err := cookie.Forget("tenant_session",
 
 ### 安全契约接口
 
-Cookie 的签名和加密能力通过 `prismgo/contracts/cookie` 包定义的接口扩展：
+Cookie 的签名和加密能力通过 `github.com/prismgo/framework/contracts/cookie` 包定义的接口扩展：
 
 ```go
 // Signer 负责 cookie 值的签名和验签

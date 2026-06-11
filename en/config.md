@@ -1,8 +1,8 @@
-# prismgo/config Usage Guide
+# Config Usage Guide
 
-`prismgo/config` provides a Laravel-style runtime configuration repository. Configuration files are registered as namespaces with `Add`, `.env` and system environment variables are read with `Env`, and application code reads values through dot paths.
+`github.com/prismgo/framework/config` provides a Laravel-style runtime configuration repository. Configuration files are registered as namespaces with `Add`, `.env` and system environment variables are read with `Env`, and application code reads values through dot paths.
 
-In this project, application code usually imports `prismgo/config`. That package registers the application configuration from `config/*.go` and re-exports the common `prismgo/config` entry points. Shared framework packages import `github.com/prismgo/framework/config` directly.
+Application code usually imports `github.com/prismgo/framework/config` directly and registers its own configuration namespaces from `config/*.go`.
 
 ## Quick Start
 
@@ -33,7 +33,7 @@ package service
 import (
     "strconv"
 
-    "prismgo/config"
+    "github.com/prismgo/framework/config"
 )
 
 func mailEndpoint() string {
@@ -53,7 +53,7 @@ MAIL_FROM_ADDRESS=notice@example.com
 
 ## What It Is For
 
-`prismgo/config` mainly solves four problems:
+`github.com/prismgo/framework/config` mainly solves four problems:
 
 | Capability | Purpose |
 | --- | --- |
@@ -66,7 +66,7 @@ The configuration repository is only responsible for loading static runtime conf
 
 ## Loading Flow
 
-During application startup, `prismgo/foundation` registers the configuration factory:
+During application startup, `github.com/prismgo/framework/foundation` registers the configuration factory:
 
 ```text
 main.go
@@ -184,7 +184,7 @@ clone := config.Clone()
 
 ## Facade Entry Points
 
-The global default configuration of `prismgo/config` is managed by `prismgo/facade`.
+The global default configuration of `github.com/prismgo/framework/config` is managed by `github.com/prismgo/framework/facade`.
 
 | Function | Purpose |
 | --- | --- |
@@ -212,7 +212,7 @@ func TestWithConfig(t *testing.T) {
 
 ## Recommendations
 
-- Application code should import `prismgo/config` first; do not repeatedly wrap environment variable reads in the business layer.
+- Application code should import `github.com/prismgo/framework/config` first; do not repeatedly wrap environment variable reads in the business layer.
 - Use lowercase English names for configuration namespaces, such as `app`, `database`, and `wechat`.
 - New configuration items should be placed in `config/*.go`; avoid direct `os.Getenv` calls in services.
 - Environment variable names should settle on the current names. Do not add compatibility entries for old names from pre-release phases.

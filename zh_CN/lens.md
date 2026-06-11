@@ -66,7 +66,7 @@ prismgolens install
 ```
 
 命令会自动：
-1. 检测当前项目已配置的 Agent（如 `.claude/skills`、`.cursor/rules` 等）
+1. 检测应用项目已配置的 Agent（如 `.claude/skills`、`.cursor/rules` 等）
 2. 写入 `.prismgo-lens.json`（团队共享配置）和 `.prismgo-lens.local.json`（本机状态）
 3. 将 guidelines 安装到 `.ai/guidelines`
 4. 将 skills 安装到 `.ai/skills` 并同步到各 Agent skills 目录
@@ -177,7 +177,7 @@ Prismgo Lens 自动检测并适配以下 Agent 的配置格式：
 
 ### install
 
-安装 guidelines、skills、MCP 配置到当前项目和 Agent。
+安装 guidelines、skills、MCP 配置到应用项目和 Agent。
 
 ```bash
 # 交互式安装（推荐首次使用）

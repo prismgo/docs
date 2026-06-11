@@ -69,7 +69,7 @@ No additional dependencies. Sessions are stored as individual files in the `stor
 
 #### Redis
 
-Requires the `prismgo/redis` package to have registered a connection pool. Specify the named connection via the `SESSION_CONNECTION` environment variable (default: `"default"`). Connection pool configuration is managed in `config/redis.go`. This driver is recommended for multi-instance deployments where session data must be shared across processes.
+Requires the `github.com/prismgo/framework/redis` package to have registered a connection pool. Specify the named connection via the `SESSION_CONNECTION` environment variable (default: `"default"`). Connection pool configuration is managed in `config/redis.go`. This driver is recommended for multi-instance deployments where session data must be shared across processes.
 
 ### Configuration Parameters
 
@@ -181,7 +181,7 @@ The middleware execution flow:
 1. Read the session ID from the request cookie.
 2. Call `Manager.Start` to restore the server-side payload; create a new `Store` if the session is missing, expired, corrupted, or has an invalid ID.
 3. Store the `*session.Store` in `gin.Context` so subsequent handlers can use it via `StoreFrom` or package-level convenience functions.
-4. Create a `prismgo/cookie` request-level queue, allowing business code to queue regular cookies in the same middleware chain.
+4. Create a `github.com/prismgo/framework/cookie` request-level queue, allowing business code to queue regular cookies in the same middleware chain.
 5. After the handler returns, automatically save the session.
 6. Write the session ID cookie, then flush the regular cookie queue.
 7. Commit the business response.
@@ -442,7 +442,7 @@ The `StartSession` middleware writes the session ID cookie with attributes from 
 
 If `SESSION_EXPIRE_ON_CLOSE=true`, the browser cookie omits `Expires` and `Max-Age` (becoming a session cookie), but the server-side payload still expires according to `SESSION_LIFETIME`.
 
-The middleware also installs a `prismgo/cookie` request-level queue. Business code can queue regular cookies in the same request, and they will be flushed after the session is saved:
+The middleware also installs a `github.com/prismgo/framework/cookie` request-level queue. Business code can queue regular cookies in the same request, and they will be flushed after the session is saved:
 
 ```go
 import cookiepkg "github.com/prismgo/framework/cookie"

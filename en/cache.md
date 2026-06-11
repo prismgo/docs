@@ -105,7 +105,7 @@ No additional dependencies. Suitable for local development and single-process te
 
 #### Redis
 
-Requires the `prismgo/redis` package to have registered a connection pool. Specify the named connection via the `connection` field, e.g., `"cache"`. Connection pool configuration is managed in `config/redis.go`.
+Requires the `github.com/prismgo/framework/redis` package to have registered a connection pool. Specify the named connection via the `connection` field, e.g., `"cache"`. Connection pool configuration is managed in `config/redis.go`.
 
 #### File
 
@@ -787,7 +787,7 @@ app.Instance("cache.manager", manager, cache.ManagerCloseOption())
 
 ## Cache Events
 
-With `cache.stores.*.events` enabled, the Repository dispatches cache lifecycle events. Events are distributed through the `prismgo/event` bus, suitable for auditing, metrics collection, and troubleshooting.
+With `cache.stores.*.events` enabled, the Repository dispatches cache lifecycle events. Events are distributed through the `github.com/prismgo/framework/event` bus, suitable for auditing, metrics collection, and troubleshooting.
 
 Set an event sink via `cache.UseEventSink`:
 
@@ -905,7 +905,7 @@ Semantic numeric values (int, uint, float, numeric strings) are written directly
 | Tags (tagged cache) | Supported | Supported | Not supported | Supported (delegates to tag-capable child store) |
 | Lock (distributed lock) | Supported | Supported | Supported | Supported (delegates to child store) |
 | LockFlush (bulk lock cleanup) | Supported | Supported | Supported | Supported (delegates to child store) |
-| Close (release resources) | Supported | No (managed by prismgo/redis) | No | No |
+| Close (release resources) | Supported | No (managed by `github.com/prismgo/framework/redis`) | No | No |
 
 ## Laravel Cache Mapping
 

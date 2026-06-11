@@ -105,7 +105,7 @@ func init() {
 
 #### Redis
 
-需要 `prismgo/redis` 包已注册连接池。在配置中通过 `connection` 字段指定使用的命名连接名，例如 `"cache"`。连接池配置在 `config/redis.go` 中管理。
+需要 `github.com/prismgo/framework/redis` 包已注册连接池。在配置中通过 `connection` 字段指定使用的命名连接名，例如 `"cache"`。连接池配置在 `config/redis.go` 中管理。
 
 #### File
 
@@ -787,7 +787,7 @@ app.Instance("cache.manager", manager, cache.ManagerCloseOption())
 
 ## Cache Events
 
-开启 `cache.stores.*.events` 后，Repository 会派发缓存生命周期事件。事件通过 `prismgo/event` 总线分发，适合用于审计、指标收集和排障。
+开启 `cache.stores.*.events` 后，Repository 会派发缓存生命周期事件。事件通过 `github.com/prismgo/framework/event` 总线分发，适合用于审计、指标收集和排障。
 
 事件接收器通过 `cache.UseEventSink` 设置：
 
@@ -905,7 +905,7 @@ sms:lock:13800138000
 | Tags（标签缓存） | 支持 | 支持 | 不支持 | 支持（委托支持 tags 的子 store） |
 | Lock（分布式锁） | 支持 | 支持 | 支持 | 支持（委托子 store） |
 | LockFlush（批量清理锁） | 支持 | 支持 | 支持 | 支持（委托子 store） |
-| Close（释放资源） | 支持 | 否（由 prismgo/redis 管理） | 否 | 否 |
+| Close（释放资源） | 支持 | 否（由 `github.com/prismgo/framework/redis` 管理） | 否 | 否 |
 
 ## 与 Laravel Cache 的对应关系
 

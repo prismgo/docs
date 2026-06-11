@@ -745,7 +745,7 @@ Cache 组件配置中通过 `connection` 引用 Redis 连接名称：
 },
 ```
 
-`prismgo/cache` 的 Redis Store 通过 Facade 获取 `"cache"` 连接：
+`github.com/prismgo/framework/cache` 的 Redis Store 通过 Facade 获取 `"cache"` 连接：
 
 ```go
 client, _ := redis.Client("cache")
@@ -774,7 +774,7 @@ Queue 组件配置中引用 Redis 连接：
 },
 ```
 
-`prismgo/queue/redis` 使用 Redis List + Sorted Set 实现任务队列：
+`github.com/prismgo/framework/queue/redis` 使用 Redis List + Sorted Set 实现任务队列：
 - 即时任务通过 `RPUSH` 推入 ready list
 - 延迟任务通过 `ZADD` 存入 delayed sorted set，到期后 Lua 脚本迁移
 - Worker 通过 `BLPOP` 阻塞等待，减少空轮询

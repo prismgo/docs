@@ -1,8 +1,8 @@
-# prismgo/config 使用说明
+# Config 使用说明
 
-`prismgo/config` 提供 Laravel 风格的运行时配置仓库：配置文件通过 `Add` 注册为命名空间，`.env` 和系统环境变量通过 `Env` 读取，业务代码再用点路径读取配置值。
+`github.com/prismgo/framework/config` 提供 Laravel 风格的运行时配置仓库：配置文件通过 `Add` 注册为命名空间，`.env` 和系统环境变量通过 `Env` 读取，业务代码再用点路径读取配置值。
 
-在当前项目里，业务层通常导入 `prismgo/config`。这个包会注册 `config/*.go` 里的业务配置，并把 `prismgo/config` 的常用入口重新导出。通用包内部则直接导入 `github.com/prismgo/framework/config`。
+业务代码通常直接导入 `github.com/prismgo/framework/config`，并在应用的 `config/*.go` 中注册自己的配置命名空间。
 
 ## 快速开始
 
@@ -33,7 +33,7 @@ package service
 import (
 	"strconv"
 
-	"prismgo/config"
+	"github.com/prismgo/framework/config"
 )
 
 func mailEndpoint() string {
@@ -53,7 +53,7 @@ MAIL_FROM_ADDRESS=notice@example.com
 
 ## 组件用途
 
-`prismgo/config` 主要解决四类问题：
+`github.com/prismgo/framework/config` 主要解决四类问题：
 
 | 能力 | 用途 |
 | --- | --- |
@@ -66,7 +66,7 @@ MAIL_FROM_ADDRESS=notice@example.com
 
 ## 加载流程
 
-当前应用启动时，`prismgo/foundation` 会注册配置工厂：
+当前应用启动时，`github.com/prismgo/framework/foundation` 会注册配置工厂：
 
 ```text
 main.go
@@ -184,7 +184,7 @@ clone := config.Clone()
 
 ## facade 入口
 
-`prismgo/config` 的全局默认配置由 `prismgo/facade` 托管。
+`github.com/prismgo/framework/config` 的全局默认配置由 `github.com/prismgo/framework/facade` 托管。
 
 | 函数 | 用途 |
 | --- | --- |
@@ -212,7 +212,7 @@ func TestWithConfig(t *testing.T) {
 
 ## 使用建议
 
-- 业务代码优先导入 `prismgo/config`，不要在业务层直接重复封装环境变量读取。
+- 业务代码优先导入 `github.com/prismgo/framework/config`，不要在业务层直接重复封装环境变量读取。
 - 配置命名空间使用小写英文名，例如 `app`、`database`、`wechat`。
 - 新配置项应放进 `config/*.go`，不要在 service 中直接 `os.Getenv`。
 - 环境变量命名固定为一套当前名称，不为未上线阶段的旧变量名新增兼容入口。

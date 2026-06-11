@@ -46,7 +46,7 @@ PrismGo 的事件系统提供了观察者模式的实现，允许你订阅和监
 
 事件是解耦应用各个方面的绝佳方式，因为一个事件可以有多个互不依赖的监听器。例如，你可能希望在每次工单创建时发送通知。与其将工单处理代码与通知代码耦合在一起，不如派发一个 `workorder.created` 事件，让监听器接收并处理通知发送。
 
-`prismgo/event` 包提供 Laravel 风格的事件总线，核心特性包括：
+`github.com/prismgo/framework/event` 包提供 Laravel 风格的事件总线，核心特性包括：
 
 - 同步派发为主，单个监听器可声明为 goroutine 异步或队列异步执行
 - 监听器之间互相隔离：任一监听器 panic 或返回 error 都不会影响其余监听器
@@ -57,7 +57,7 @@ PrismGo 的事件系统提供了观察者模式的实现，允许你订阅和监
 
 ### 手动注册监听器
 
-PrismGo 不支持自动事件发现，所有监听器需要显式注册。当前项目在 `app/listeners/register.go` 中集中注册业务监听器：
+PrismGo 不支持自动事件发现，所有监听器需要显式注册。应用可以在 `app/listeners/register.go` 中集中注册业务监听器：
 
 ```go
 package listeners
@@ -68,7 +68,7 @@ import (
     eventcontract "github.com/prismgo/framework/contracts/event"
     "github.com/prismgo/framework/event"
     "github.com/prismgo/framework/logger"
-    "prismgo/app/services"
+    "yourapp/app/services"
 )
 
 func Register(bus eventcontract.Dispatcher, notificationSvc *services.NotificationService) {
@@ -203,7 +203,7 @@ PrismGo 不支持通过返回 `false` 停止事件传播。所有匹配的监听
 
 ## Queued Event Listeners
 
-如果监听器需要执行耗时操作（如发送邮件、调用外部 API），可以使用队列监听器，让监听器在队列 worker 中异步执行。使用前请确保已配置 `prismgo/queue` 并启动了 worker。
+如果监听器需要执行耗时操作（如发送邮件、调用外部 API），可以使用队列监听器，让监听器在队列 worker 中异步执行。使用前请确保已配置 `github.com/prismgo/framework/queue` 并启动了 worker。
 
 ### 实现 ShouldQueue 接口
 
@@ -353,7 +353,7 @@ func (s *WorkorderSubscriber) onAssigned(ctx context.Context, ev event.Event) er
 bus.Subscribe(&WorkorderSubscriber{notifications: notificationSvc})
 ```
 
-当前项目业务监听器集中在 `app/listeners/`，由 provider 在启动阶段统一注册。
+业务监听器通常集中放在 `app/listeners/`，由 provider 在启动阶段统一注册。
 
 ## 全局门面
 
@@ -391,7 +391,7 @@ bus.Listen("user.registered", event.Async(func(ctx context.Context, ev event.Eve
 
 ## 生命周期事件
 
-`prismgo/event` 定义了一组通用生命周期事件，供基础设施和业务侧订阅。事件名统一使用 `<domain>.<stage>` 格式。
+`github.com/prismgo/framework/event` 定义了一组通用生命周期事件，供基础设施和业务侧订阅。事件名统一使用 `<domain>.<stage>` 格式。
 
 ### 应用生命周期
 
@@ -611,7 +611,7 @@ func TestWorkorderCreatedListener(t *testing.T) {
 ## 最佳实践
 
 - 业务事件定义放在领域相关包中，事件名用常量保存
-- 监听器集中注册，例如当前项目的 `app/listeners/register.go`
+- 监听器集中注册，例如应用内的 `app/listeners/register.go`
 - 派发事件时只传必要业务 ID 或轻量快照
 - 监听器内部要显式处理类型断言，必要时先检查 `ok` 并返回错误
 - 需要可靠异步、重试和失败归档时使用队列监听器
@@ -622,7 +622,7 @@ func TestWorkorderCreatedListener(t *testing.T) {
 
 ## 接口参考
 
-所有接口定义在 `prismgo/contracts/event` 包中。
+所有接口定义在 `github.com/prismgo/framework/contracts/event` 包中。
 
 ### Event
 
@@ -759,7 +759,7 @@ PrismGo 对齐 Laravel 13 Events 的核心模型，但存在以下差异：
 | Listener constructor 自动注入 | 不支持 | 依赖由业务代码或 provider 构造监听器时注入 |
 | 返回 `false` 停止传播 | 不支持 | PrismGo 会继续执行所有匹配的监听器 |
 | `Event::fake` / `assertDispatched` | 不支持 | 测试使用独立 dispatcher 或自定义监听器断言 |
-| 数据库事务后的事件派发 | 不支持 | 需结合 `prismgo/queue` 能力另行封装 |
+| 数据库事务后的事件派发 | 不支持 | 需结合 `github.com/prismgo/framework/queue` 能力另行封装 |
 | Queued Listener Middleware | 不支持 | — |
 | Encrypted Queued Listeners | 不支持 | — |
 | Unique Event Listeners | 不支持 | — |

@@ -50,7 +50,7 @@
 
 ## 简介
 
-`prismgo/queue` 是 Laravel Queue 风格的 Go 队列组件，用于把耗时、可重试、可延迟的任务从主请求流程中拆出来异步执行。
+`github.com/prismgo/framework/queue` 是 Laravel Queue 风格的 Go 队列组件，用于把耗时、可重试、可延迟的任务从主请求流程中拆出来异步执行。
 
 适合用来处理：
 
@@ -76,7 +76,7 @@
 | 驱动 | 前提条件 | 适用场景 |
 | --- | --- | --- |
 | `sync` | 无额外依赖 | 测试、本地开发、无需后台 Worker 的简单场景 |
-| `redis` | 需要 `prismgo/redis` 包已注册连接池 | 生产环境后台消费 |
+| `redis` | 需要 `github.com/prismgo/framework/redis` 包已注册连接池 | 生产环境后台消费 |
 | `rabbitmq` | 需要 RabbitMQ 服务可用 | 使用 AMQP 后端的生产环境 |
 
 ## 配置
@@ -1304,11 +1304,11 @@ func (c MyConnector) Connect(_ context.Context, name string, config map[string]a
 
 | 高级功能 | 依赖 |
 | --- | --- |
-| 唯一任务 | `prismgo/cache`（不依赖队列连接） |
-| 防抖任务 | `prismgo/cache`（不依赖队列连接） |
-| `WithoutOverlapping` | `prismgo/cache` 锁（不依赖队列连接） |
-| `RateLimit` | `prismgo/cache`（不依赖队列连接） |
-| `ThrottlesExceptions` | `prismgo/cache`（不依赖队列连接） |
+| 唯一任务 | `github.com/prismgo/framework/cache`（不依赖队列连接） |
+| 防抖任务 | `github.com/prismgo/framework/cache`（不依赖队列连接） |
+| `WithoutOverlapping` | `github.com/prismgo/framework/cache` 锁（不依赖队列连接） |
+| `RateLimit` | `github.com/prismgo/framework/cache`（不依赖队列连接） |
+| `ThrottlesExceptions` | `github.com/prismgo/framework/cache`（不依赖队列连接） |
 | 失败任务命令 | `FailedStore` |
 | `queue:restart` | `RestartStore` |
 | 批量任务 | `BatchStore` |

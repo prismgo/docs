@@ -67,7 +67,7 @@ The default connection is set by `QUEUE_CONNECTION`. The default queue name is s
 | Driver | Prerequisite |
 |--------|-------------|
 | `sync` | None — jobs execute immediately in the current goroutine |
-| `redis` | A running Redis server; the `prismgo/redis` package configured |
+| `redis` | A running Redis server; the `github.com/prismgo/framework/redis` package configured |
 | `rabbitmq` | A running RabbitMQ broker; the `amqp091-go` client library |
 
 ## Configuration

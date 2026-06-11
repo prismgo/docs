@@ -1,6 +1,6 @@
 # Rate Limiting
 
-`prismgo/ratelimit` 提供 Laravel RateLimiter 风格的固定窗口限流能力。它通过 `prismgo/cache` 管理限流状态，复用已有的 memory / redis 缓存配置，同时提供 Gin 中间件和手动计数 API 两种使用方式。
+`github.com/prismgo/framework/ratelimit` 提供 Laravel RateLimiter 风格的固定窗口限流能力。它通过 `github.com/prismgo/framework/cache` 管理限流状态，复用已有的 memory / redis 缓存配置，同时提供 Gin 中间件和手动计数 API 两种使用方式。
 
 本文档按 Laravel 13 Rate Limiting 文档的能力模型组织：配置、使用方式、命名限流器、中间件、手动计数 API 和最佳实践。PrismGo 保持 Go 的显式 `context.Context`、`time.Duration` 和错误返回语义。
 
@@ -29,25 +29,25 @@
 └───────────────────────┬─────────────────────────────┘
                         │
 ┌───────────────────────▼─────────────────────────────┐
-│          prismgo/http/middleware/throttle.go         │
+│      github.com/prismgo/framework/http/middleware    │
 │           Throttle / ThrottleFor 中间件              │
 └───────────────────────┬─────────────────────────────┘
                         │
 ┌───────────────────────▼─────────────────────────────┐
-│              prismgo/ratelimit/limiter.go            │
+│          github.com/prismgo/framework/ratelimit      │
 │         RateLimiter 核心：计数、窗口、判断           │
 └───────────────────────┬─────────────────────────────┘
                         │
 ┌───────────────────────▼─────────────────────────────┐
-│         prismgo/cache (Repository)                   │
+│      github.com/prismgo/framework/cache (Repository) │
 │   memory / redis / file / failover store            │
 └─────────────────────────────────────────────────────┘
 ```
 
 - **路由层**：在 `routes/api.go` 中通过 `middleware.Throttle("login")` 挂载到路由或分组。
-- **中间件层**：`prismgo/http/middleware` 将命名限流器转换为 Gin 中间件，处理限流判断、响应头写入和超限响应。
-- **限流核心**：`prismgo/ratelimit` 管理命名限流器注册表、固定窗口计数和手动 API。
-- **缓存层**：限流状态通过 `prismgo/cache` 持久化，支持 memory（单进程）和 redis（多实例）两种 store。
+- **中间件层**：`github.com/prismgo/framework/http/middleware` 将命名限流器转换为 Gin 中间件，处理限流判断、响应头写入和超限响应。
+- **限流核心**：`github.com/prismgo/framework/ratelimit` 管理命名限流器注册表、固定窗口计数和手动 API。
+- **缓存层**：限流状态通过 `github.com/prismgo/framework/cache` 持久化，支持 memory（单进程）和 redis（多实例）两种 store。
 
 ## 配置
 
@@ -456,7 +456,7 @@ route.Prefix("/api/v1").
 
 ## route 包兼容用法
 
-`prismgo/route` 保留旧的限流写法，内部委托到 `prismgo/ratelimit`。新代码建议直接使用 `ratelimit.For` 和 `middleware.Throttle`，但已有代码可以继续使用 `route` 包的写法。
+`github.com/prismgo/framework/route` 保留旧的限流写法，内部委托到 `github.com/prismgo/framework/ratelimit`。新代码建议直接使用 `ratelimit.For` 和 `middleware.Throttle`，但已有代码可以继续使用 `route` 包的写法。
 
 ```go
 route.RateLimiter("login", func(c *gin.Context) []route.Limit {

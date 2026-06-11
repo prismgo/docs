@@ -46,7 +46,7 @@ PrismGo's event system provides a simple observer pattern implementation, allowi
 
 Events serve as a great way to decouple various aspects of your application, since a single event can have multiple listeners that do not depend on each other. For example, you may wish to send a notification each time a work order has been created. Instead of coupling your work order processing code to your notification code, you can dispatch a `workorder.created` event which a listener can receive and use to send the notification.
 
-The `prismgo/event` package provides a Laravel-style event bus with the following core features:
+The `github.com/prismgo/framework/event` package provides a Laravel-style event bus with the following core features:
 
 - Synchronous dispatch by default; individual listeners can opt into goroutine-async or queue-async execution
 - Listeners are isolated from each other: a panic or error in one listener does not affect the others
@@ -68,7 +68,7 @@ import (
     eventcontract "github.com/prismgo/framework/contracts/event"
     "github.com/prismgo/framework/event"
     "github.com/prismgo/framework/logger"
-    "prismgo/app/services"
+    "yourapp/app/services"
 )
 
 func Register(bus eventcontract.Dispatcher, notificationSvc *services.NotificationService) {
@@ -203,7 +203,7 @@ PrismGo does not support stopping event propagation by returning `false`. All ma
 
 ## Queued Event Listeners
 
-If your listener is going to perform a slow task such as sending an email or making an HTTP request, you can use queued listeners to execute the listener asynchronously in a queue worker. Make sure you have configured `prismgo/queue` and started a worker before using queued listeners.
+If your listener is going to perform a slow task such as sending an email or making an HTTP request, you can use queued listeners to execute the listener asynchronously in a queue worker. Make sure you have configured `github.com/prismgo/framework/queue` and started a worker before using queued listeners.
 
 ### Implementing ShouldQueue
 
@@ -391,7 +391,7 @@ For reliable async execution with retries, delayed dispatch, or cross-process wo
 
 ## Lifecycle Events
 
-`prismgo/event` defines a set of general-purpose lifecycle events for infrastructure and business code to subscribe to. Event names follow the `<domain>.<stage>` format.
+`github.com/prismgo/framework/event` defines a set of general-purpose lifecycle events for infrastructure and business code to subscribe to. Event names follow the `<domain>.<stage>` format.
 
 ### Application Lifecycle
 
@@ -622,7 +622,7 @@ For queued listener tests, you can use the `sync` queue connection to have the l
 
 ## Interface Reference
 
-All interfaces are defined in the `prismgo/contracts/event` package.
+All interfaces are defined in the `github.com/prismgo/framework/contracts/event` package.
 
 ### Event
 
@@ -759,7 +759,7 @@ PrismGo aligns with the core model of Laravel 13 Events, but has the following d
 | Listener constructor auto-injection | Not supported | Dependencies are injected when business code or providers construct listeners |
 | Returning `false` to stop propagation | Not supported | PrismGo continues executing all matching listeners |
 | `Event::fake` / `assertDispatched` | Not supported | Tests use independent dispatchers or custom listener assertions |
-| Dispatching events after database transactions | Not supported | Needs to be wrapped separately with `prismgo/queue` capabilities |
+| Dispatching events after database transactions | Not supported | Needs to be wrapped separately with `github.com/prismgo/framework/queue` capabilities |
 | Queued Listener Middleware | Not supported | — |
 | Encrypted Queued Listeners | Not supported | — |
 | Unique Event Listeners | Not supported | — |

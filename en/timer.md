@@ -30,7 +30,7 @@
 
 ## Introduction
 
-`prismgo/timer` provides a Laravel Scheduler-style task scheduling system. Developers can register project commands or Go closures as recurring tasks through a fluent API, and the scheduler runs them automatically in the background.
+`github.com/prismgo/framework/timer` provides a Laravel Scheduler-style task scheduling system. Developers can register project commands or Go closures as recurring tasks through a fluent API, and the scheduler runs them automatically in the background.
 
 **Common use cases:**
 
@@ -158,14 +158,14 @@ user=www
 
 ## Configuration
 
-`prismgo/timer` does not require an additional configuration file. Scheduler behavior is controlled by the following environment:
+`github.com/prismgo/framework/timer` does not require an additional configuration file. Scheduler behavior is controlled by the following environment:
 
 | Configuration | Source | Description |
 | --- | --- | --- |
 | **Timezone** | `time.Local` (operating system timezone) | All calendar schedules, such as `DailyAt("18:30")`, calculate hit times using the system local time |
 | **Debug logs** | `config.GetBool("app.debug", false)` | When set to `true`, a `[schedule] task xxx done` log is printed after each successful task run |
-| **Cache driver** | Default `prismgo/cache` store | The overlap-prevention lock used by `WithoutOverlapping()` depends on this cache driver. For cross-process overlap prevention, configure the default cache store as a shared backend such as Redis |
-| **Exception reporting** | `prismgo/exception` container binding | When a task returns an error or panics, it is reported through `exception.Report`; if no reporter is bound, it is ignored silently |
+| **Cache driver** | Default `github.com/prismgo/framework/cache` store | The overlap-prevention lock used by `WithoutOverlapping()` depends on this cache driver. For cross-process overlap prevention, configure the default cache store as a shared backend such as Redis |
+| **Exception reporting** | `github.com/prismgo/framework/exception` container binding | When a task returns an error or panics, it is reported through `exception.Report`; if no reporter is bound, it is ignored silently |
 
 It is recommended to print the task list when the scheduler starts, so operations can verify the active configuration:
 
@@ -575,7 +575,7 @@ func (t *ScheduledTask) WithoutOverlapping(expiresAt ...int) *ScheduledTask
 
 **How it works:**
 
-1. Before each run, the scheduler attempts to acquire a distributed lock through the default `prismgo/cache` store
+1. Before each run, the scheduler attempts to acquire a distributed lock through the default `github.com/prismgo/framework/cache` store
 2. The lock key is generated from the task name: `Command` tasks use the command name, while `Call` tasks should explicitly set `Name` to remain stable across processes
 3. If the previous run still holds the lock, the current trigger is skipped directly; it does not wait and does not call the task function
 4. After task execution finishes, the lock is released automatically
@@ -587,7 +587,7 @@ s.Command("emails:send").EveryMinute().WithoutOverlapping(10)    // 10-minute ex
 s.Call(fn).Name("dashboard_rebuild").EveryTenMinutes().WithoutOverlapping()
 ```
 
-> **Note:** Cross-process overlap prevention requires configuring the default `prismgo/cache` store as a shared backend such as Redis. With an in-memory driver, it only applies within the current process.
+> **Note:** Cross-process overlap prevention requires configuring the default `github.com/prismgo/framework/cache` store as a shared backend such as Redis. With an in-memory driver, it only applies within the current process.
 
 ## Starting and Stopping The Scheduler
 
@@ -670,13 +670,13 @@ The scheduler has built-in exception handling so a single task error does not af
 
 ### Task Returns An Error
 
-- Reports through `prismgo/exception` `Report`, including context such as `task`, `status` (`500`), `component` (`"cron"`), and `duration_ms`
+- Reports through `github.com/prismgo/framework/exception` `Report`, including context such as `task`, `status` (`500`), `component` (`"cron"`), and `duration_ms`
 - Does **not** stop the scheduler or affect other tasks
 - The task continues running when the next hit time arrives
 
 ### Task Panics
 
-- Panic is captured inside the goroutine through `prismgo/routine`
+- Panic is captured inside the goroutine through `github.com/prismgo/framework/routine`
 - It is also reported through `exception.Report`
 - The task loop continues, and later triggers are unaffected
 
@@ -687,7 +687,7 @@ The scheduler has built-in exception handling so a single task error does not af
 
 ### Exception Reporting Dependency
 
-Error and panic reporting depends on the Reporter binding from the `prismgo/exception` package. Tests can inject a custom Reporter to verify behavior. Production environments should ensure the Reporter is configured correctly.
+Error and panic reporting depends on the Reporter binding from the `github.com/prismgo/framework/exception` package. Tests can inject a custom Reporter to verify behavior. Production environments should ensure the Reporter is configured correctly.
 
 ## Execution Model
 
@@ -798,7 +798,7 @@ type ResolvedCommand struct {
 | `Fn` | `func(context.Context) error` | The function ultimately executed by the scheduler |
 | `Description` | `string` | Task description shown in `Summary()` output |
 
-`ResolvedCommand` is the bridge result between the command system and the scheduler. It lets `prismgo/timer` avoid depending on a concrete command framework. The scheduler only cares about receiving an executable function; command registration, argument parsing, and dependency injection are completed by the outer resolver.
+`ResolvedCommand` is the bridge result between the command system and the scheduler. It lets `github.com/prismgo/framework/timer` avoid depending on a concrete command framework. The scheduler only cares about receiving an executable function; command registration, argument parsing, and dependency injection are completed by the outer resolver.
 
 ### CommandResolver
 

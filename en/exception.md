@@ -246,7 +246,7 @@ Returning `true` indicates the error has been handled. You may use any Gin respo
 
 ## HTTP Exceptions
 
-Exceptions during HTTP request processing are automatically captured by the unified exception handling middleware. The middleware is implemented in `prismgo/http/middleware/exception.go` and provides:
+Exceptions during HTTP request processing are automatically captured by the unified exception handling middleware from `github.com/prismgo/framework/http/middleware`, which provides:
 
 1. **Panic recovery**: Catches panics and renders a safe 500 response, logging the panic value and stack trace.
 2. **c.Errors handling**: Collects errors accumulated in the Gin context and reports them.
@@ -471,11 +471,11 @@ The following framework modules use `exception.Report()` to report exceptions in
 
 | Module | Scenario |
 | --- | --- |
-| `prismgo/kernel` | CLI command panic recovery and execution error reporting |
-| `prismgo/routine` | Safe goroutine panic recovery and error reporting |
-| `prismgo/queue` | Queue job final failure reporting |
-| `prismgo/horizon` | Supervisor/worker runtime error reporting |
-| `prismgo/event` | Event listener panic/error reporting |
+| `github.com/prismgo/framework/kernel` | CLI command panic recovery and execution error reporting |
+| `github.com/prismgo/framework/routine` | Safe goroutine panic recovery and error reporting |
+| `github.com/prismgo/framework/queue` | Queue job final failure reporting |
+| `github.com/prismgo/framework/horizon` | Supervisor/worker runtime error reporting |
+| `github.com/prismgo/framework/event` | Event listener panic/error reporting |
 
 In non-HTTP paths, `status` defaults to 500 and `fields` are provided by the caller.
 

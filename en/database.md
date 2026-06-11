@@ -538,4 +538,4 @@ app.Instance("database.default", db, database.DBCloseOption())
 | `php artisan db:seed` | `go run ./ seed` |
 | `php artisan db:seed --class=UserSeeder` | `database.SeederByClass("UserSeeder")` |
 | `DatabaseSeeder` default class | `database.DefaultSeederClass` constant |
-| Schema Builder | `prismgo/database/schema` sub-package (separate docs) |
+| Schema Builder | `github.com/prismgo/framework/database/schema` sub-package (separate docs) |

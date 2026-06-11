@@ -27,7 +27,7 @@ PrismGo's logging component provides a multi-channel logging system inspired by 
 
 PrismGo logging is based on "channels". Each channel represents a specific way of writing log information. For example, the `single` channel writes logs to a single file, the `daily` channel rotates log files by day, and the `stderr` channel writes to the process's standard error stream. Log messages can be written to multiple channels based on their severity.
 
-Under the hood, PrismGo utilizes [logrus](https://github.com/sirupsen/logrus), a structured logger for Go. The `prismgo/logger` package provides a Laravel-like configuration layer on top of logrus, allowing you to mix and match drivers and formatters to customize your application's log handling.
+Under the hood, PrismGo utilizes [logrus](https://github.com/sirupsen/logrus), a structured logger for Go. The `github.com/prismgo/framework/logger` package provides a Laravel-like configuration layer on top of logrus, allowing you to mix and match drivers and formatters to customize your application's log handling.
 
 Every PrismGo application ships with a pre-configured logging setup. The default configuration uses the `stack` channel, which aggregates multiple log channels into a single channel, giving you the flexibility to write logs to multiple destinations simultaneously.
 
@@ -204,7 +204,7 @@ Each channel's `level` option determines the minimum severity a message must hav
 
 ### Using the Facade
 
-The `prismgo/logger` package provides a set of package-level functions that act as a facade to the default log channel. These are the primary way to write log messages in business code:
+The `github.com/prismgo/framework/logger` package provides a set of package-level functions that act as a facade to the default log channel. These are the primary way to write log messages in business code:
 
 ```go
 import "github.com/prismgo/framework/logger"

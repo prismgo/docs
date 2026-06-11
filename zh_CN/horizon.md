@@ -39,7 +39,7 @@
 
 ## 简介
 
-PrismGo Horizon 提供队列运行时监控与 supervisor 管理能力，对应 Laravel Horizon 的核心功能。它围绕 `prismgo/queue` 的事件、worker、failed store 和 batch store 构建，负责队列运行视图、控制命令、指标聚合、Dashboard API 和进程心跳，不替代队列 driver 本身。
+PrismGo Horizon 提供队列运行时监控与 supervisor 管理能力，对应 Laravel Horizon 的核心功能。它围绕 `github.com/prismgo/framework/queue` 的事件、worker、failed store 和 batch store 构建，负责队列运行视图、控制命令、指标聚合、Dashboard API 和进程心跳，不替代队列 driver 本身。
 
 核心进程模型：
 
@@ -49,7 +49,7 @@ PrismGo Horizon 提供队列运行时监控与 supervisor 管理能力，对应 
 | Supervisor | 一组队列 worker 的配置单元，声明 connection、queue、进程数、重试和超时策略 |
 | Worker | 真实消费队列任务的 `horizon:work` 子进程 |
 
-Horizon 的状态与队列消息分离。队列消息仍由 `prismgo/queue` 的 Redis、RabbitMQ 或其他 driver 管理；Horizon Store 只保存监控和控制数据。
+Horizon 的状态与队列消息分离。队列消息仍由 `github.com/prismgo/framework/queue` 的 Redis、RabbitMQ 或其他 driver 管理；Horizon Store 只保存监控和控制数据。
 
 ## 安装
 
@@ -639,7 +639,7 @@ go run ./ horizon:clear-metrics
 
 ## 失败任务
 
-Horizon 不替代 `prismgo/queue` 的 FailedStore，但提供 `horizon:forget` 命令维护失败记录：
+Horizon 不替代 `github.com/prismgo/framework/queue` 的 FailedStore，但提供 `horizon:forget` 命令维护失败记录：
 
 ```bash
 # 删除单条失败记录
@@ -653,7 +653,7 @@ go run ./ horizon:forget --all
 
 ## 长等待事件
 
-当队列等待时间超过 `horizon.waits` 中配置的阈值时，Horizon 会发出 `horizon.long_wait` 事件。业务应用可以通过 `prismgo/event` 监听该事件，将事件转换为通知、日志或外部告警。
+当队列等待时间超过 `horizon.waits` 中配置的阈值时，Horizon 会发出 `horizon.long_wait` 事件。业务应用可以通过 `github.com/prismgo/framework/event` 监听该事件，将事件转换为通知、日志或外部告警。
 
 ```go
 event.Listen("horizon.long_wait", func(ctx context.Context, e event.Event) error {

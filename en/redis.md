@@ -745,7 +745,7 @@ The Cache component references a Redis connection name via the `connection` fiel
 },
 ```
 
-The `prismgo/cache` Redis Store obtains the `"cache"` connection through the Facade:
+The `github.com/prismgo/framework/cache` Redis Store obtains the `"cache"` connection through the Facade:
 
 ```go
 client, _ := redis.Client("cache")
@@ -774,7 +774,7 @@ The Queue component references a Redis connection in its configuration:
 },
 ```
 
-`prismgo/queue/redis` uses Redis List + Sorted Set to implement the task queue:
+`github.com/prismgo/framework/queue/redis` uses Redis List + Sorted Set to implement the task queue:
 - Immediate tasks are pushed via `RPUSH` to the ready list
 - Delayed tasks are stored via `ZADD` in a delayed sorted set, migrated by Lua script on expiry
 - Workers wait via `BLPOP` to reduce idle polling

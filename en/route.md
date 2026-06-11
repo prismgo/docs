@@ -33,7 +33,7 @@
 
 ## Introduction
 
-`prismgo/route` is a Laravel-style routing declaration library for Gin. It wraps route definitions, groups, middleware, parameter constraints, named routes, and model binding in declarative APIs, reducing repetitive prefix concatenation and middleware management when writing raw `gin.Engine` routes.
+`github.com/prismgo/framework/route` is a Laravel-style routing declaration library for Gin. It wraps route definitions, groups, middleware, parameter constraints, named routes, and model binding in declarative APIs, reducing repetitive prefix concatenation and middleware management when writing raw `gin.Engine` routes.
 
 Core design principles:
 

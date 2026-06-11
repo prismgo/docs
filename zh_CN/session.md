@@ -69,7 +69,7 @@ func init() {
 
 #### Redis
 
-需要 `prismgo/redis` 包已注册连接池。通过 `SESSION_CONNECTION` 环境变量指定命名连接（默认 `"default"`）。连接池配置在 `config/redis.go` 中管理。推荐在多实例部署、需要跨进程共享 session 数据的场景下使用。
+需要 `github.com/prismgo/framework/redis` 包已注册连接池。通过 `SESSION_CONNECTION` 环境变量指定命名连接（默认 `"default"`）。连接池配置在 `config/redis.go` 中管理。推荐在多实例部署、需要跨进程共享 session 数据的场景下使用。
 
 ### 配置参数
 
@@ -181,7 +181,7 @@ func updateProfile(c *gin.Context) {
 1. 从请求 Cookie 读取 session ID。
 2. 调用 `Manager.Start` 恢复服务端 payload；缺失、过期、损坏或 ID 非法时创建新 Store。
 3. 把 `*session.Store` 写入 `gin.Context`，后续 handler 可通过 `StoreFrom` 或包级快捷函数使用。
-4. 同时创建 `prismgo/cookie` 请求级队列，允许业务在同一中间件链里排队普通 Cookie。
+4. 同时创建 `github.com/prismgo/framework/cookie` 请求级队列，允许业务在同一中间件链里排队普通 Cookie。
 5. handler 执行结束后自动保存 session。
 6. 写出 session ID Cookie，再 flush 普通 Cookie 队列。
 7. 最后提交业务响应。
@@ -443,7 +443,7 @@ func logout(c *gin.Context) {
 
 如果 `SESSION_EXPIRE_ON_CLOSE=true`，浏览器 Cookie 不写 `Expires` 和 `Max-Age`（变为会话 Cookie），但服务端 payload 仍按 `SESSION_LIFETIME` 过期。
 
-中间件也会安装 `prismgo/cookie` 的请求级队列。业务可以在同一请求中排队普通 Cookie，session 保存后统一 flush：
+中间件也会安装 `github.com/prismgo/framework/cookie` 的请求级队列。业务可以在同一请求中排队普通 Cookie，session 保存后统一 flush：
 
 ```go
 import cookiepkg "github.com/prismgo/framework/cookie"

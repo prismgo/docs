@@ -39,7 +39,7 @@
 
 ## Introduction
 
-PrismGo Horizon provides queue runtime monitoring and supervisor management capabilities, corresponding to the core features of Laravel Horizon. It is built around `prismgo/queue` events, workers, failed stores, and batch stores, and is responsible for queue runtime views, control commands, metrics aggregation, Dashboard API, and process heartbeats. It does not replace the queue driver itself.
+PrismGo Horizon provides queue runtime monitoring and supervisor management capabilities, corresponding to the core features of Laravel Horizon. It is built around `github.com/prismgo/framework/queue` events, workers, failed stores, and batch stores, and is responsible for queue runtime views, control commands, metrics aggregation, Dashboard API, and process heartbeats. It does not replace the queue driver itself.
 
 Core process model:
 
@@ -49,7 +49,7 @@ Core process model:
 | Supervisor | A configuration unit for a group of queue workers, declaring connection, queue, process count, retry, and timeout strategies |
 | Worker | A real `horizon:work` child process that consumes queue tasks |
 
-Horizon's state is separate from queue messages. Queue messages are still managed by `prismgo/queue` Redis, RabbitMQ, or other drivers; the Horizon Store only holds monitoring and control data.
+Horizon's state is separate from queue messages. Queue messages are still managed by `github.com/prismgo/framework/queue` Redis, RabbitMQ, or other drivers; the Horizon Store only holds monitoring and control data.
 
 ## Installation
 
@@ -639,7 +639,7 @@ go run ./ horizon:clear-metrics
 
 ## Failed Jobs
 
-Horizon does not replace `prismgo/queue`'s FailedStore, but provides the `horizon:forget` command for maintaining failed records:
+Horizon does not replace `github.com/prismgo/framework/queue`'s FailedStore, but provides the `horizon:forget` command for maintaining failed records:
 
 ```bash
 # Delete a single failed record
@@ -653,7 +653,7 @@ Safe summaries of failed jobs (without payloads or complete stacks) are collecte
 
 ## Long Wait Events
 
-When queue wait times exceed the thresholds configured in `horizon.waits`, Horizon emits a `horizon.long_wait` event. Applications can listen for this event through `prismgo/event` to convert it into notifications, logs, or external alerts.
+When queue wait times exceed the thresholds configured in `horizon.waits`, Horizon emits a `horizon.long_wait` event. Applications can listen for this event through `github.com/prismgo/framework/event` to convert it into notifications, logs, or external alerts.
 
 ```go
 event.Listen("horizon.long_wait", func(ctx context.Context, e event.Event) error {

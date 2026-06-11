@@ -1,6 +1,6 @@
 # Support
 
-`prismgo/support` provides framework-level helper functions. These helpers are decoupled from business logic and cover five areas: **value checks**, **type conversion**, **URL generation**, **path resolution**, and **environment checks**. Path helpers are the single place where application directory structure is defined. Code that needs to locate project directories should use the `support` package instead of manually joining strings or depending on `os.Getwd`.
+`github.com/prismgo/framework/support` provides framework-level helper functions. These helpers are decoupled from business logic and cover five areas: **value checks**, **type conversion**, **URL generation**, **path resolution**, and **environment checks**. Path helpers are the single place where application directory structure is defined. Code that needs to locate project directories should use the `support` package instead of manually joining strings or depending on `os.Getwd`.
 
 - [Feature Overview](#feature-overview)
 - [Environment Dependencies](#environment-dependencies)

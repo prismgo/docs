@@ -53,7 +53,7 @@
 
 ---
 
-`prismgo/filesystem` provides a Laravel Filesystem / Storage style file storage abstraction. Business code programs against "disk names" and "relative paths" without directly depending on local directories, public directories, or Alibaba Cloud OSS implementations.
+`github.com/prismgo/framework/filesystem` provides a Laravel Filesystem / Storage style file storage abstraction. Business code programs against "disk names" and "relative paths" without directly depending on local directories, public directories, or Alibaba Cloud OSS implementations.
 
 All operations explicitly accept `context.Context`, file paths use disk-relative paths, and return values carry `error`.
 
@@ -665,7 +665,7 @@ OSS driver ACL mapping:
 
 ### Registering a Driver
 
-`prismgo/filesystem` supports Laravel 13 `Storage::extend` style custom drivers. Register the driver factory before the filesystem manager is first resolved, then use the registered name in disk configuration:
+`github.com/prismgo/framework/filesystem` supports Laravel 13 `Storage::extend` style custom drivers. Register the driver factory before the filesystem manager is first resolved, then use the registered name in disk configuration:
 
 ```go
 package providers

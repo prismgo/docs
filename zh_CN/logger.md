@@ -27,7 +27,7 @@ PrismGo 日志组件提供 Laravel Logging 风格的多通道日志系统。它�
 
 PrismGo 日志系统基于"通道"（Channel）的概念。每个通道代表一种特定的日志写入方式。例如，`single` 通道将日志写入单个文件，`daily` 通道按天切割日志文件，`stderr` 通道写入进程的标准错误流。日志消息可以根据严重级别写入多个通道。
 
-底层使用 [logrus](https://github.com/sirupsen/logrus) 作为结构化日志引擎，`prismgo/logger` 包在 logrus 之上提供了 Laravel 风格的配置层，允许你灵活组合不同的驱动（Driver）和格式化器（Formatter）来自定义应用的日志处理。
+底层使用 [logrus](https://github.com/sirupsen/logrus) 作为结构化日志引擎，`github.com/prismgo/framework/logger` 包在 logrus 之上提供了 Laravel 风格的配置层，允许你灵活组合不同的驱动（Driver）和格式化器（Formatter）来自定义应用的日志处理。
 
 每个 PrismGo 应用都自带预配置的日志设置。默认使用 `stack` 通道，它聚合多个日志通道为一个通道，让你能同时将日志写入多个目的地。
 
@@ -204,7 +204,7 @@ PrismGo 支持以下日志级别（按严重程度降序排列）：
 
 ### 使用 Facade
 
-`prismgo/logger` 包提供了一组包级函数作为默认日志通道的 Facade。这是业务代码中写入日志的主要方式：
+`github.com/prismgo/framework/logger` 包提供了一组包级函数作为默认日志通道的 Facade。这是业务代码中写入日志的主要方式：
 
 ```go
 import "github.com/prismgo/framework/logger"

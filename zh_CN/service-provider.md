@@ -22,7 +22,7 @@ Prismgo 内部使用了一组默认服务提供者来启动引导其核心服务
 
 ## 编写服务提供者
 
-所有服务提供者都实现 `prismgo/contracts/provider` 中的 `ServiceProvider` 接口。大多数服务提供者包含一个 `Register` 和一个 `Boot` 方法。在 `Register` 方法中，你应该**只将事物绑定到[服务容器](/docs/{{version}}/container)中**。你永远不应该在 `Register` 方法中尝试注册任何事件监听器、路由或任何其他功能。
+所有服务提供者都实现 `github.com/prismgo/framework/contracts/provider` 中的 `ServiceProvider` 接口。大多数服务提供者包含一个 `Register` 和一个 `Boot` 方法。在 `Register` 方法中，你应该**只将事物绑定到[服务容器](/docs/{{version}}/container)中**。你永远不应该在 `Register` 方法中尝试注册任何事件监听器、路由或任何其他功能。
 
 让我们创建一个基础的服务提供者。`Register` 方法是你在容器中绑定服务的地方，`Boot` 方法是执行注册后任务的地方：
 
@@ -192,7 +192,7 @@ func (ServiceProvider) Boot(providerApplication) error {
 package bootstrap
 
 import (
-    appproviders "prismgo/app/providers"
+    appproviders "yourapp/app/providers"
     "github.com/prismgo/framework/provider"
 )
 
@@ -221,7 +221,7 @@ func Providers() []provider.ServiceProvider {
 func (HorizonServiceProvider) Name() string { return "app.horizon" }
 
 // 隐式标识——使用 Go 类型路径
-// "prismgo/app/providers.AppServiceProvider"
+// "yourapp/app/providers.AppServiceProvider"
 ```
 
 如果同一个标识被注册两次，第二次注册会被静默忽略，使用第一个提供者实例。

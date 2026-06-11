@@ -245,7 +245,7 @@ e.Render(func(c *gin.Context, err error) bool {
 
 ## HTTP 异常
 
-HTTP 请求处理中的异常由统一异常处理中间件自动捕获。中间件在 `prismgo/http/middleware/exception.go` 中实现，行为包括：
+HTTP 请求处理中的异常由 `github.com/prismgo/framework/http/middleware` 的统一异常处理中间件自动捕获，行为包括：
 
 1. **panic 恢复**：捕获 panic 并渲染 500 安全响应，记录 panic 值和调用栈。
 2. **c.Errors 处理**：收集 Gin context 中累积的错误并上报。
@@ -470,11 +470,11 @@ type ResponseRenderer func(c *gin.Context, err error) bool
 
 | 模块 | 场景 |
 | --- | --- |
-| `prismgo/kernel` | CLI 命令 panic 恢复和执行错误上报 |
-| `prismgo/routine` | 安全协程 panic 恢复和错误上报 |
-| `prismgo/queue` | 队列任务最终失败后上报 |
-| `prismgo/horizon` | supervisor/worker 运行时错误上报 |
-| `prismgo/event` | 事件监听器 panic/错误上报 |
+| `github.com/prismgo/framework/kernel` | CLI 命令 panic 恢复和执行错误上报 |
+| `github.com/prismgo/framework/routine` | 安全协程 panic 恢复和错误上报 |
+| `github.com/prismgo/framework/queue` | 队列任务最终失败后上报 |
+| `github.com/prismgo/framework/horizon` | supervisor/worker 运行时错误上报 |
+| `github.com/prismgo/framework/event` | 事件监听器 panic/错误上报 |
 
 非 HTTP 路径中 `status` 默认为 500，`fields` 由调用方提供。
 

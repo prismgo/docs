@@ -83,7 +83,7 @@
 
 ## 简介
 
-`prismgo/route` 是面向 Gin 的 Laravel 风格路由声明库。它将路由定义、分组、中间件、参数约束、命名路由和模型绑定等能力封装为声明式 API，降低手写 `gin.Engine` 路由时重复的前缀拼接和中间件管理代码。
+`github.com/prismgo/framework/route` 是面向 Gin 的 Laravel 风格路由声明库。它将路由定义、分组、中间件、参数约束、命名路由和模型绑定等能力封装为声明式 API，降低手写 `gin.Engine` 路由时重复的前缀拼接和中间件管理代码。
 
 **核心设计原则：**
 
@@ -93,7 +93,7 @@
 - 路由元数据在挂载前完整收集，支持 `route:list` 命令行、命名 URL 生成和资源路由。
 - 参数约束、绑定失败、域名检查等横切逻辑在请求链路最前端统一处理。
 
-当前项目的业务路由集中注册在 [routes/api.go](../../routes/api.go)，静态文件路由在 [routes/storage.go](../../routes/storage.go)，命令行路由查看能力在 [prismgo/cmd/route.go](../cmd/route.go)。
+应用的业务路由通常集中注册在 `routes/api.go`，静态文件路由可放在 `routes/storage.go`，命令行路由查看能力由框架的 route 命令提供。
 
 ---
 
@@ -595,7 +595,7 @@ route.Static("/assets", "./public/assets")
 
 ## Fallback 路由
 
-当所有路由都不匹配时，执行 Fallback 处理函数。当前项目中用它实现 SPA 回退：非 `/api` 路径返回 `public/index.html`。
+当所有路由都不匹配时，执行 Fallback 处理函数。应用可以用它实现 SPA 回退：非 `/api` 路径返回 `public/index.html`。
 
 ```go
 route.Fallback(func(c *gin.Context) {

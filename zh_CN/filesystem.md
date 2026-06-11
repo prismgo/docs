@@ -53,7 +53,7 @@
 
 ---
 
-`prismgo/filesystem` 提供 Laravel Filesystem / Storage 风格的文件存储抽象。业务代码面向"磁盘名"和"相对路径"编程，不直接依赖本地目录、公开目录或阿里云 OSS 实现。
+`github.com/prismgo/framework/filesystem` 提供 Laravel Filesystem / Storage 风格的文件存储抽象。业务代码面向"磁盘名"和"相对路径"编程，不直接依赖本地目录、公开目录或阿里云 OSS 实现。
 
 所有操作都显式接收 `context.Context`，文件路径使用磁盘内相对路径，返回值携带 `error`。
 
@@ -665,7 +665,7 @@ OSS 驱动的 ACL 映射：
 
 ### 注册 Driver
 
-`prismgo/filesystem` 支持 Laravel 13 `Storage::extend` 风格的自定义 driver。业务侧需要在 filesystem manager 首次解析前注册 driver 工厂，然后在磁盘配置中使用注册名：
+`github.com/prismgo/framework/filesystem` 支持 Laravel 13 `Storage::extend` 风格的自定义 driver。业务侧需要在 filesystem manager 首次解析前注册 driver 工厂，然后在磁盘配置中使用注册名：
 
 ```go
 package providers

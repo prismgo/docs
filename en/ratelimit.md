@@ -1,6 +1,6 @@
 # Rate Limiting
 
-`prismgo/ratelimit` provides Laravel RateLimiter-style fixed-window rate limiting. It stores limiter state through `prismgo/cache`, reuses the existing memory / redis cache configuration, and exposes both Gin middleware and manual counting APIs.
+`github.com/prismgo/framework/ratelimit` provides Laravel RateLimiter-style fixed-window rate limiting. It stores limiter state through `github.com/prismgo/framework/cache`, reuses the existing memory / redis cache configuration, and exposes both Gin middleware and manual counting APIs.
 
 This document follows the capability model of Laravel 13 Rate Limiting: configuration, usage, named limiters, middleware, manual counting APIs, and best practices. PrismGo keeps Go's explicit `context.Context`, `time.Duration`, and error-return semantics.
 
@@ -24,15 +24,15 @@ The rate limiting module depends on the following layers:
 
 ```text
 routes/api.go
-  -> prismgo/http/middleware/throttle.go
-  -> prismgo/ratelimit/limiter.go
-  -> prismgo/cache (memory / redis / file / failover store)
+  -> github.com/prismgo/framework/http/middleware
+  -> github.com/prismgo/framework/ratelimit
+  -> github.com/prismgo/framework/cache (memory / redis / file / failover store)
 ```
 
 - **Route layer**: attaches middleware such as `middleware.Throttle("login")` in `routes/api.go`.
 - **Middleware layer**: converts named limiters into Gin middleware, writes headers, and returns over-limit responses.
 - **Limiter core**: manages named limiter registration, fixed-window counting, and manual APIs.
-- **Cache layer**: persists limiter state through `prismgo/cache`; `memory` is single-process, while `redis` works across instances.
+- **Cache layer**: persists limiter state through `github.com/prismgo/framework/cache`; `memory` is single-process, while `redis` works across instances.
 
 ## Configuration
 
@@ -345,7 +345,7 @@ route.Prefix("/api/v1").
 
 ## Compatibility Through the route Package
 
-`prismgo/route` keeps the older rate limiting style and delegates internally to `prismgo/ratelimit`. New code should prefer `ratelimit.For` and `middleware.Throttle`, but existing code may continue using the route package:
+`github.com/prismgo/framework/route` keeps the older rate limiting style and delegates internally to `github.com/prismgo/framework/ratelimit`. New code should prefer `ratelimit.For` and `middleware.Throttle`, but existing code may continue using the route package:
 
 ```go
 route.RateLimiter("login", func(c *gin.Context) []route.Limit {

@@ -31,7 +31,7 @@ import (
     "fmt"
     "os"
 
-    "prismgo/bootstrap"
+    "yourapp/bootstrap"
 
     _ "github.com/joho/godotenv/autoload"
 )

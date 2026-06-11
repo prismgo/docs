@@ -538,4 +538,4 @@ app.Instance("database.default", db, database.DBCloseOption())
 | `php artisan db:seed` | `go run ./ seed` |
 | `php artisan db:seed --class=UserSeeder` | `database.SeederByClass("UserSeeder")` |
 | `DatabaseSeeder` 默认类 | `database.DefaultSeederClass` 常量 |
-| Schema Builder | `prismgo/database/schema` 子包（独立文档） |
+| Schema Builder | `github.com/prismgo/framework/database/schema` 子包（独立文档） |
