@@ -16,6 +16,7 @@ Welcome to the PrismGo documentation. This index links to the available framewor
 - [Container](en/container.md)
 - [Service Providers](en/service-provider.md)
 - [Facades](en/facade.md)
+- [Support](en/support.md)
 
 ### Web and Request State
 
