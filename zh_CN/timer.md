@@ -917,27 +917,3 @@ defer s.Stop()
 ```go
 logger.Infof("scheduled tasks:\n%s", s.Summary())
 ```
-
-## 验证
-
-修改调度器行为后，建议运行单元测试和覆盖率检查：
-
-```bash
-# 运行 timer 包测试
-go test ./prismgo/timer -run TestSchedule -count=1
-
-# 运行 timer 包覆盖率
-./scripts/coverage.sh ./prismgo/timer
-```
-
-测试覆盖的核心行为：
-
-- 固定间隔周期执行
-- 日历调度命中时间计算
-- 调度器启动与优雅停止
-- 任务返回 error 后继续运行
-- `WithoutOverlapping` 防重叠（acquire、skip、release、跨实例同名锁）
-- `Command` 注册与参数解析
-- `Summary` 输出
-- 异常上报（error、panic）
-- 非法输入 panic 保护

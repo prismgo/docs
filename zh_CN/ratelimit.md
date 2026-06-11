@@ -801,26 +801,6 @@ if limited {
 }
 ```
 
-## 测试
-
-修改 `prismgo/ratelimit` 实现后运行：
-
-```powershell
-go test ./prismgo/ratelimit -cover
-```
-
-涉及 route 兼容层时：
-
-```powershell
-go test ./prismgo/route -cover
-```
-
-涉及应用路由或启动装配时：
-
-```powershell
-go test ./...
-```
-
 ## 与 Laravel 13 的边界
 
 PrismGo 对齐 Laravel 13 Rate Limiting 的核心使用体验，但不是逐项复制：

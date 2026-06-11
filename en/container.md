@@ -356,7 +356,7 @@ Each `EntryInfo` contains:
 | `Closable` | Whether the service has a closer registered |
 | `CloseGroup` | The close group for shutdown ordering |
 
-`List` is useful for diagnostics, testing shutdown behaviour, and auditing resource leaks during development.
+`List` is useful for diagnostics, testing shutdown behaviour, and auditing resource leaks.
 
 ### Resetting Services
 

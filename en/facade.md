@@ -59,7 +59,7 @@ The resolution flow works as follows:
 
 1. It calls `container.Make[T](key)` to resolve a service by key from the current Application's container.
 2. If the container is not set up (no current Application), the key is not bound, the type doesn't match, or the factory returns an error, `container.Make` returns an error.
-3. `facade.Resolve` converts these errors into panics, ensuring assembly issues are immediately exposed during development, preventing callers from proceeding with zero values.
+3. `facade.Resolve` converts these errors into panics, ensuring assembly issues are exposed immediately and preventing callers from proceeding with zero values.
 
 Each functional module (cache, config, route, logger, etc.) defines a `facade.go` file within its package, which uses `facade.Resolve` to obtain the underlying service instance and exposes a set of package-level convenience functions. The call chain is:
 
@@ -95,7 +95,7 @@ manager := facade.Resolve[*cache.Manager]("cache.manager")
 - Service doesn't exist, type mismatch, or factory error: **panics** (does not return an error).
 - No current Application container: **panics**.
 
-> This is intentionally designed: Facades are strictly convenience entry points. Swallowing resolution errors would cause callers to proceed with zero values. Therefore, the facade layer consistently panics to expose assembly issues, catching errors during development.
+> This is intentionally designed: Facades are strictly convenience entry points. Swallowing resolution errors would cause callers to proceed with zero values. Therefore, the facade layer consistently panics to expose assembly issues as early as possible.
 
 ## Available Facades
 

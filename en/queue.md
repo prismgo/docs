@@ -910,7 +910,7 @@ Decryption is transparent — the worker decrypts the payload before unmarshalin
 
 ## Custom Drivers
 
-To create a custom queue driver (e.g., database-backed, SQS, or a proprietary backend), implement three core interfaces from `contracts/queue`. No modifications to the `prismgo/queue` built-in code are required.
+To create a custom queue driver (e.g., database-backed, SQS, or a proprietary backend), implement three core interfaces from `contracts/queue` and register the implementation as a custom driver.
 
 ### Required Interfaces
 

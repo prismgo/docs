@@ -370,7 +370,7 @@ Agent 调用 → search-docs(queries=["permission", "tenant"], packages=["projec
 {
   "results": [
     {
-      "path": "prismgo/docs/zh_CN/cache.md",
+      "path": "github.com/prismgo/docs/zh_CN/cache.md",
       "snippet": "缓存系统以 Manager 管理多个缓存 store...",
       "source": "local",
       "package": "prismgo",
@@ -803,9 +803,7 @@ prismgolens install \
 
 ## 安全边界
 
-- **独立模块**：Lens 位于 `tools/prismgo-lens`，拥有独立 `go.mod`
 - **模块路径**：`github.com/prismgo/lens`
-- **不进入构建**：`go build .` 不会编译此模块
 - **工具白名单**：MCP 调用只能访问注册的工具
 - **隔离执行**：MCP `tools/call` 通过子进程执行，带超时和输出限制
 - **SQL 安全**：`database-query` 仅允许只读 SQL，拒绝写入、DDL、多语句

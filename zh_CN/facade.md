@@ -94,7 +94,7 @@ manager := facade.Resolve[*cache.Manager]("cache.manager")
 - 服务不存在、类型不匹配或 factory 返回错误：**panic**（非 error 返回）。
 - 当前无 Application 容器：**panic**。
 
-> 这种设计是有意为之的：Facade 是严格便捷入口，解析错误如果被吞掉会让调用方拿到零值继续执行。因此 facade 层统一 panic 暴露装配问题，让开发阶段就能发现错误。
+> 这种设计是有意为之的：Facade 是严格便捷入口，解析错误如果被吞掉会让调用方拿到零值继续执行。因此 facade 层统一 panic 暴露装配问题，让错误尽早显现。
 
 ## 可用 Facade
 

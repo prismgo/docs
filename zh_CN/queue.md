@@ -1005,7 +1005,7 @@ _, err := queue.Dispatch(ctx, &jobs.SendWelcomeMailJob{UserID: 1001}, queue.Encr
 
 ## 自定义驱动
 
-如果需要接入数据库队列或业务自研队列，不需要修改 `prismgo/queue` 内置分支。自定义驱动需要实现 `contracts/queue` 包中的三个核心接口。
+如果需要接入数据库队列或业务自研队列，实现 `contracts/queue` 包中的三个核心接口并注册为自定义 driver 即可。
 
 ### 需实现的接口
 

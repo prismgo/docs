@@ -370,7 +370,7 @@ Agent calls → search-docs(queries=["permission", "tenant"], packages=["project
 {
   "results": [
     {
-      "path": "prismgo/docs/en/cache.md",
+      "path": "github.com/prismgo/docs/en/cache.md",
       "snippet": "The cache system uses a Manager to coordinate multiple stores...",
       "source": "local",
       "package": "prismgo",
@@ -803,9 +803,7 @@ For enabled modules:
 
 ## Safety Boundaries
 
-- **Separate module**: Lens lives under `tools/prismgo-lens` with its own `go.mod`
 - **Module path**: `github.com/prismgo/lens`
-- **Not in production builds**: `go build .` does not compile this module
 - **Tool allowlist**: MCP calls can only reach registered tools
 - **Isolated execution**: MCP `tools/call` runs via a subprocess with timeout and output limits
 - **SQL safety**: `database-query` only allows read-only SQL; writes, DDL, and multi-statement are rejected
