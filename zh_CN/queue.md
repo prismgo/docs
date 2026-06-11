@@ -52,6 +52,8 @@
 
 `github.com/prismgo/framework/queue` 是 Laravel Queue 风格的 Go 队列组件，用于把耗时、可重试、可延迟的任务从主请求流程中拆出来异步执行。
 
+队列 worker、失败任务和重启命令的完整参数见 [命令行：队列命令](commands.md#队列命令)。
+
 适合用来处理：
 
 - 发送短信、站内信、企微消息、邮件

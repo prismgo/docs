@@ -43,6 +43,8 @@
 
 PrismGo 的 Console 组件提供了一套 Laravel Artisan 风格的命令行开发体验，包括结构化命令定义、Signature DSL 解析、统一的输入/输出接口、交互式提问、命令互调、信号处理和命令隔离等能力。
 
+内置命令、`make:*` 生成器、`serve`、`migrate:*`、`queue:*` 等命令参考见 [命令行](commands.md)。
+
 ---
 
 ## 简介

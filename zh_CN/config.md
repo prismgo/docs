@@ -6,6 +6,7 @@
 - [环境变量函数](#环境变量函数)
 - [配置注册](#配置注册)
 - [配置读取](#配置读取)
+- [应用配置参考](#应用配置参考)
 - [独立实例](#独立实例)
 - [facade 入口](#facade-入口)
 - [使用建议](#使用建议)
@@ -169,6 +170,46 @@ labels := config.GetStringMapString("map.labels")
 ```
 
 如果路径不存在，map 读取函数返回空 map，不返回 nil。
+
+## 应用配置参考
+
+新项目的应用级配置位于 `config/app.go`，通过 `config.Add("app", ...)` 注册。`.env` 中的 `APP_*` 和 `SERVER_*` 会覆盖默认值。
+
+### 基础应用配置
+
+| 配置路径 | 环境变量 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `app.name` | `APP_NAME` | `Prismgo` | 应用名称，用于框架需要展示或引用应用名的场景 |
+| `app.env` | `APP_ENV` | `production` | 当前运行环境；迁移等高风险命令会用它判断是否需要 `--force` |
+| `app.key` | `APP_KEY` | `""` | 应用加密密钥，见 [加密](encryption.md) |
+| `app.debug` | `APP_DEBUG` | `false` | 调试模式；生产环境必须为 `false` |
+| `app.url` | `APP_URL` | `http://localhost:8080` | 命令行或非 HTTP 场景生成绝对 URL 时使用 |
+| `app.timezone` | `APP_TIMEZONE` | `UTC` | 应用时区配置 |
+| `app.locale` | `APP_LOCALE` | `en` | 翻译组件默认语言 |
+| `app.fallback_locale` | `APP_FALLBACK_LOCALE` | `en` | 当前语言缺少翻译时的 fallback |
+| `app.cipher` | `APP_CIPHER` | `AES-256-GCM` | 加密算法，当前支持 `AES-256-GCM` |
+| `app.previous_keys` | `APP_PREVIOUS_KEYS` | `""` | 逗号分隔的旧应用密钥，用于密钥轮换 |
+
+### HTTP Server 配置
+
+| 配置路径 | 环境变量 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `app.server.host` | `SERVER_HOST` | `""` | 监听主机 |
+| `app.server.port` | `SERVER_PORT` | `8080` | 监听端口 |
+| `app.server.timeout` | `SERVER_TIMEOUT` | `15` | 兼容型请求超时 fallback |
+| `app.server.read_timeout` | `SERVER_READ_TIMEOUT` | `15s` | 读取完整请求超时 |
+| `app.server.read_header_timeout` | `SERVER_READ_HEADER_TIMEOUT` | `5s` | 读取请求头超时 |
+| `app.server.write_timeout` | `SERVER_WRITE_TIMEOUT` | `30s` | 写响应超时 |
+| `app.server.idle_timeout` | `SERVER_IDLE_TIMEOUT` | `60s` | keep-alive 空闲超时 |
+| `app.server.shutdown_timeout` | `SERVER_SHUTDOWN_TIMEOUT` | `15s` | 优雅关闭等待时间 |
+| `app.server.max_header_bytes` | `SERVER_MAX_HEADER_BYTES` | `1048576` | 最大请求头字节数 |
+| `app.server.max_multipart_memory` | `SERVER_MAX_MULTIPART_MEMORY` | `33554432` | multipart 表单内存上限 |
+| `app.server.trusted_proxies` | `SERVER_TRUSTED_PROXIES` | `""` | 逗号分隔的可信代理 |
+| `app.server.client_ip_headers` | `SERVER_CLIENT_IP_HEADERS` | `X-Forwarded-For,X-Real-IP` | 解析客户端 IP 的请求头 |
+| `app.server.access_log` | `SERVER_ACCESS_LOG` | `true` | 是否启用访问日志 |
+| `app.server.exception_handler` | `SERVER_EXCEPTION_HANDLER` | `true` | 是否挂载统一异常处理中间件 |
+
+更多 HTTP 服务说明见 [HTTP Server](http-server.md)。
 
 ## 独立实例
 

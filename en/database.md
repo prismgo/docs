@@ -31,6 +31,8 @@
 
 PrismGo's database component provides database connection management, migration registration, and index maintenance capabilities built on top of GORM. It currently ships with built-in MySQL driver support, follows a Laravel-style configuration structure, and implements lazy connection creation and automatic cleanup through the ServiceProvider.
 
+For full migration and seeding command options, see [Commands: Database Migration Commands](commands.md#database-migration-commands).
+
 ---
 
 ## Introduction

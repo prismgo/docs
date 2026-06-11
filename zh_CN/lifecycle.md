@@ -24,6 +24,8 @@ Prismgo 应用的入口点是 `main.go`。这个文件是应用实例被创建�
 
 Prismgo 的第一个动作是通过 `bootstrap.NewApplication()` 创建应用实例。这会调用 `foundation.Configure()`，构建一个 `Application` 实例，并注册框架所有的[服务提供者](/docs/{{version}}/service-provider)。
 
+新项目从安装到第一个接口的完整流程见 [快速入门](starter.md)。HTTP 服务配置和 `serve` 进程控制见 [HTTP Server](http-server.md)。
+
 ```go
 package main
 

@@ -6,6 +6,7 @@
 - [Environment Variable Function](#environment-variable-function)
 - [Registering Configuration](#registering-configuration)
 - [Reading Configuration](#reading-configuration)
+- [Application Configuration Reference](#application-configuration-reference)
 - [Standalone Instances](#standalone-instances)
 - [Facade Entry Points](#facade-entry-points)
 - [Recommendations](#recommendations)
@@ -169,6 +170,46 @@ labels := config.GetStringMapString("map.labels")
 ```
 
 If the path does not exist, map read functions return an empty map instead of `nil`.
+
+## Application Configuration Reference
+
+New applications register application-level configuration in `config/app.go` with `config.Add("app", ...)`. `APP_*` and `SERVER_*` values from `.env` override the defaults.
+
+### Base Application Configuration
+
+| Config Path | Environment Variable | Default | Description |
+| --- | --- | --- | --- |
+| `app.name` | `APP_NAME` | `Prismgo` | Application name used when the framework displays or references the app |
+| `app.env` | `APP_ENV` | `production` | Current environment; high-risk commands use this to decide whether `--force` is required |
+| `app.key` | `APP_KEY` | `""` | Application encryption key; see [Encryption](encryption.md) |
+| `app.debug` | `APP_DEBUG` | `false` | Debug mode; must be `false` in production |
+| `app.url` | `APP_URL` | `http://localhost:8080` | Base URL used from CLI and other non-HTTP contexts |
+| `app.timezone` | `APP_TIMEZONE` | `UTC` | Application timezone |
+| `app.locale` | `APP_LOCALE` | `en` | Default locale for translations |
+| `app.fallback_locale` | `APP_FALLBACK_LOCALE` | `en` | Fallback locale when a translation is missing |
+| `app.cipher` | `APP_CIPHER` | `AES-256-GCM` | Encryption cipher; currently `AES-256-GCM` |
+| `app.previous_keys` | `APP_PREVIOUS_KEYS` | `""` | Comma-separated old application keys for key rotation |
+
+### HTTP Server Configuration
+
+| Config Path | Environment Variable | Default | Description |
+| --- | --- | --- | --- |
+| `app.server.host` | `SERVER_HOST` | `""` | Listen host |
+| `app.server.port` | `SERVER_PORT` | `8080` | Listen port |
+| `app.server.timeout` | `SERVER_TIMEOUT` | `15` | Legacy request timeout fallback |
+| `app.server.read_timeout` | `SERVER_READ_TIMEOUT` | `15s` | Timeout for reading full requests |
+| `app.server.read_header_timeout` | `SERVER_READ_HEADER_TIMEOUT` | `5s` | Timeout for reading request headers |
+| `app.server.write_timeout` | `SERVER_WRITE_TIMEOUT` | `30s` | Response write timeout |
+| `app.server.idle_timeout` | `SERVER_IDLE_TIMEOUT` | `60s` | Keep-alive idle timeout |
+| `app.server.shutdown_timeout` | `SERVER_SHUTDOWN_TIMEOUT` | `15s` | Graceful shutdown timeout |
+| `app.server.max_header_bytes` | `SERVER_MAX_HEADER_BYTES` | `1048576` | Maximum request header bytes |
+| `app.server.max_multipart_memory` | `SERVER_MAX_MULTIPART_MEMORY` | `33554432` | Multipart form memory limit |
+| `app.server.trusted_proxies` | `SERVER_TRUSTED_PROXIES` | `""` | Comma-separated trusted proxies |
+| `app.server.client_ip_headers` | `SERVER_CLIENT_IP_HEADERS` | `X-Forwarded-For,X-Real-IP` | Headers used to resolve client IP |
+| `app.server.access_log` | `SERVER_ACCESS_LOG` | `true` | Enable access logging |
+| `app.server.exception_handler` | `SERVER_EXCEPTION_HANDLER` | `true` | Mount the unified exception handler middleware |
+
+For more HTTP server details, see [HTTP Server](http-server.md).
 
 ## Standalone Instances
 

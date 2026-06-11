@@ -95,6 +95,8 @@
 
 应用的业务路由通常集中注册在 `routes/api.go`，静态文件路由可放在 `routes/storage.go`，命令行路由查看能力由框架的 route 命令提供。
 
+如果你刚创建项目，先阅读 [快速入门](starter.md) 添加第一个 HTTP 接口；`route:list` 参数见 [命令行](commands.md#查看命令)。
+
 ---
 
 ## 快速开始

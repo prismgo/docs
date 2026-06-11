@@ -43,6 +43,8 @@
 
 PrismGo's Console component provides a Laravel Artisan-style command-line development experience, including structured command definitions, Signature DSL parsing, unified input/output interfaces, interactive prompts, inter-command calls, signal handling, and command isolation.
 
+For built-in commands, `make:*` generators, `serve`, `migrate:*`, `queue:*`, and related command references, see [Commands](commands.md).
+
 ---
 
 ## Introduction

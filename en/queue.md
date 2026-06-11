@@ -52,6 +52,8 @@
 
 PrismGo's queue component provides a unified, Laravel-style queue abstraction over multiple backend transports (sync, Redis, RabbitMQ). Business code dispatches jobs through the `queue` facade; a long-running worker process consumes and executes them.
 
+For full worker, failed-job, and restart command options, see [Commands: Queue Commands](commands.md#queue-commands).
+
 All operations accept `context.Context`, use `time.Duration` for timeouts and delays, and return `error`.
 
 ### Connections vs. Queues

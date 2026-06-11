@@ -24,6 +24,8 @@ The entry point for a Prismgo application is `main.go`. This file is where the a
 
 The first action taken by Prismgo is to create an instance of the application via `bootstrap.NewApplication()`. This calls `foundation.Configure()`, which builds up an `Application` instance and registers all the framework's [service providers](/docs/{{version}}/service-provider).
 
+For the full flow from installation to your first endpoint, see [Getting Started](starter.md). For HTTP server configuration and `serve` process control, see [HTTP Server](http-server.md).
+
 ```go
 package main
 

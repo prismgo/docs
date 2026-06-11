@@ -45,6 +45,8 @@ Core design principles:
 
 Application routes are usually registered in `routes/api.go`, static file routes in `routes/storage.go`, and route listing support is implemented by the route command.
 
+If you have just created a project, start with [Getting Started](starter.md) to add your first HTTP endpoint. For command options, see [Commands](commands.md).
+
 ## Quick Start
 
 ### Using the Facade
