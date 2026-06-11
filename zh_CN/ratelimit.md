@@ -1,5 +1,21 @@
 # Rate Limiting
 
+- [功能概览](#功能概览)
+- [架构概览](#架构概览)
+- [配置](#配置)
+- [快速开始](#快速开始)
+- [命名限流器](#命名限流器)
+- [Limit 构造器](#limit-构造器)
+- [Limit 链式方法](#limit-链式方法)
+- [Gin 中间件](#gin-中间件)
+- [route 包兼容用法](#route-包兼容用法)
+- [手动计数 API](#手动计数-api)
+- [哈希 key](#哈希-key)
+- [Key 设计建议](#key-设计建议)
+- [工作机制](#工作机制)
+- [错误处理](#错误处理)
+- [与 Laravel 13 的边界](#与-laravel-13-的边界)
+
 `github.com/prismgo/framework/ratelimit` 提供 Laravel RateLimiter 风格的固定窗口限流能力。它通过 `github.com/prismgo/framework/cache` 管理限流状态，复用已有的 memory / redis 缓存配置，同时提供 Gin 中间件和手动计数 API 两种使用方式。
 
 本文档按 Laravel 13 Rate Limiting 文档的能力模型组织：配置、使用方式、命名限流器、中间件、手动计数 API 和最佳实践。PrismGo 保持 Go 的显式 `context.Context`、`time.Duration` 和错误返回语义。

@@ -1,5 +1,21 @@
 # Rate Limiting
 
+- [Feature Overview](#feature-overview)
+- [Architecture](#architecture)
+- [Configuration](#configuration)
+- [Quick Start](#quick-start)
+- [Named Limiters](#named-limiters)
+- [Limit Builders](#limit-builders)
+- [Limit Chain Methods](#limit-chain-methods)
+- [Gin Middleware](#gin-middleware)
+- [Compatibility Through the route Package](#compatibility-through-the-route-package)
+- [Manual Counting API](#manual-counting-api)
+- [Hashed Keys](#hashed-keys)
+- [Key Design](#key-design)
+- [How It Works](#how-it-works)
+- [Error Handling](#error-handling)
+- [Boundaries Compared With Laravel 13](#boundaries-compared-with-laravel-13)
+
 `github.com/prismgo/framework/ratelimit` provides Laravel RateLimiter-style fixed-window rate limiting. It stores limiter state through `github.com/prismgo/framework/cache`, reuses the existing memory / redis cache configuration, and exposes both Gin middleware and manual counting APIs.
 
 This document follows the capability model of Laravel 13 Rate Limiting: configuration, usage, named limiters, middleware, manual counting APIs, and best practices. PrismGo keeps Go's explicit `context.Context`, `time.Duration`, and error-return semantics.

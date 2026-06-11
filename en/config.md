@@ -1,5 +1,15 @@
 # Config Usage Guide
 
+- [Quick Start](#quick-start)
+- [What It Is For](#what-it-is-for)
+- [Loading Flow](#loading-flow)
+- [Environment Variable Function](#environment-variable-function)
+- [Registering Configuration](#registering-configuration)
+- [Reading Configuration](#reading-configuration)
+- [Standalone Instances](#standalone-instances)
+- [Facade Entry Points](#facade-entry-points)
+- [Recommendations](#recommendations)
+
 `github.com/prismgo/framework/config` provides a Laravel-style runtime configuration repository. Configuration files are registered as namespaces with `Add`, `.env` and system environment variables are read with `Env`, and application code reads values through dot paths.
 
 Application code usually imports `github.com/prismgo/framework/config` directly and registers its own configuration namespaces from `config/*.go`.
