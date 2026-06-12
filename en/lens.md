@@ -56,13 +56,13 @@ Prismgo Lens is a **development-only helper** for PrismGo projects. It provides 
 Install the Prismgo Lens CLI:
 
 ```bash
-go install github.com/prismgo/lens/cmd/prismgolens@latest
+go install github.com/prismgo/lens/cmd/prismgo-lens@latest
 ```
 
 Run from a PrismGo project root:
 
 ```bash
-prismgolens install
+prismgo-lens install
 ```
 
 This command automatically:
@@ -76,7 +76,7 @@ This command automatically:
 ### Interactive Install Wizard
 
 ```bash
-prismgolens install --interactive
+prismgo-lens install --interactive
 ```
 
 The wizard walks you through:
@@ -89,22 +89,22 @@ The wizard walks you through:
 
 ```bash
 # Install guidelines and MCP for Codex only
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent codex --guidelines --mcp
 
 # Install everything for a specific Agent
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent claude_code --guidelines --skills --mcp --browser-logs
 
 # Install with a third-party module's AI assets
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent cursor --package-module github.com/prismgo/framework
 ```
 
 ### Dry Run (Preview Without Writing)
 
 ```bash
-prismgolens install --dry-run --no-interaction
+prismgo-lens install --dry-run --no-interaction
 ```
 
 Example output:
@@ -181,14 +181,14 @@ Install guidelines, skills, and MCP config into the project and configured Agent
 
 ```bash
 # Interactive install (recommended first time)
-prismgolens install --interactive
+prismgo-lens install --interactive
 
 # Specify Agents and features
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent claude_code --guidelines --skills --mcp
 
 # Preview without writing files
-prismgolens install --dry-run
+prismgo-lens install --dry-run
 ```
 
 **Available options:**
@@ -216,13 +216,13 @@ Resync all installed content from `.prismgo-lens.json`.
 
 ```bash
 # Resync everything
-prismgolens update
+prismgo-lens update
 
 # Preview update, exclude skills
-prismgolens update --dry-run --ignore-skills
+prismgo-lens update --dry-run --ignore-skills
 
 # Update and show discovered package assets
-prismgolens update --discover
+prismgo-lens update --discover
 ```
 
 ### doctor
@@ -230,7 +230,7 @@ prismgolens update --discover
 Report the detected project root, executable command, current PATH status, and installation warnings.
 
 ```bash
-prismgolens doctor
+prismgo-lens doctor
 ```
 
 ### mcp
@@ -238,7 +238,7 @@ prismgolens doctor
 Start the stdio MCP server for Agent consumption.
 
 ```bash
-prismgolens mcp
+prismgo-lens mcp
 ```
 
 Normally invoked automatically by the Agent's MCP config — no manual execution needed.
@@ -249,11 +249,11 @@ Execute a single MCP tool in an isolated subprocess with base64-encoded JSON arg
 
 ```bash
 # Execute application-info (e30= is base64 for {})
-prismgolens execute-tool application-info e30=
+prismgo-lens execute-tool application-info e30=
 
 # Execute get-config for app.name
 # {"key":"app.name"} base64-encoded is eyJrZXkiOiJhcHAubmFtZSJ9
-prismgolens execute-tool get-config eyJrZXkiOiJhcHAubmFtZSJ9
+prismgo-lens execute-tool get-config eyJrZXkiOiJhcHAubmFtZSJ9
 ```
 
 ### browser-proxy
@@ -262,7 +262,7 @@ Start a dev-only reverse proxy that injects a browser logger into HTML responses
 
 ```bash
 # Proxy to local app, access via port 8052
-prismgolens browser-proxy \
+prismgo-lens browser-proxy \
   --target http://127.0.0.1:8051 --listen 127.0.0.1:8052
 ```
 
@@ -277,7 +277,7 @@ When browsing via `http://127.0.0.1:8052`:
 List installed skills in `.ai/skills`.
 
 ```bash
-prismgolens list-skills
+prismgo-lens list-skills
 ```
 
 ### add-skill
@@ -286,22 +286,22 @@ Audit and install a skill from a local directory or a GitHub repository.
 
 ```bash
 # Install from a local directory
-prismgolens add-skill /path/to/local/skill
+prismgo-lens add-skill /path/to/local/skill
 
 # Install from GitHub (auto-audited)
-prismgolens add-skill owner/repo/path/to/skill
+prismgo-lens add-skill owner/repo/path/to/skill
 
 # List all available skills in the repository
-prismgolens add-skill owner/repo --list
+prismgo-lens add-skill owner/repo --list
 
 # Install a specific skill
-prismgolens add-skill owner/repo --skill skill-name
+prismgo-lens add-skill owner/repo --skill skill-name
 
 # Install all discovered skills
-prismgolens add-skill owner/repo --all
+prismgo-lens add-skill owner/repo --all
 
 # Skip audit (requires --force)
-prismgolens add-skill owner/repo --skill skill-name --force --skip-audit
+prismgo-lens add-skill owner/repo --skill skill-name --force --skip-audit
 ```
 
 ---
@@ -729,13 +729,13 @@ Prismgo Lens provides skill management so Agents can access framework best pract
 
 ```bash
 # Install from a local directory
-prismgolens add-skill ./my-custom-skill
+prismgo-lens add-skill ./my-custom-skill
 
 # Install from GitHub
-prismgolens add-skill github.com/owner/repo/skills/my-skill
+prismgo-lens add-skill github.com/owner/repo/skills/my-skill
 
 # See which skills are available in the repository
-prismgolens add-skill github.com/owner/repo --list
+prismgo-lens add-skill github.com/owner/repo --list
 ```
 
 After installation, skills are automatically synced to all configured Agent skill directories.
@@ -785,13 +785,13 @@ some-module/
 
 ```bash
 # Discover AI assets from all Go module dependencies
-prismgolens update --discover
+prismgo-lens update --discover
 
 # Enable a specific module in .prismgo-lens.json
 # "selected_package_modules": ["github.com/prismgo/framework"]
 
 # Or specify during install
-prismgolens install \
+prismgo-lens install \
   --package-module github.com/prismgo/framework
 ```
 

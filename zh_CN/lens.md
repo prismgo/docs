@@ -56,13 +56,13 @@ Prismgo Lens 是 PrismGo 的**开发环境辅助工具**，为 AI 编程 Agent�
 安装 Prismgo Lens CLI：
 
 ```bash
-go install github.com/prismgo/lens/cmd/prismgolens@latest
+go install github.com/prismgo/lens/cmd/prismgo-lens@latest
 ```
 
 在 PrismGo 项目根目录运行：
 
 ```bash
-prismgolens install
+prismgo-lens install
 ```
 
 命令会自动：
@@ -76,7 +76,7 @@ prismgolens install
 ### 交互式安装向导
 
 ```bash
-prismgolens install --interactive
+prismgo-lens install --interactive
 ```
 
 交互式向导会引导你选择：
@@ -89,22 +89,22 @@ prismgolens install --interactive
 
 ```bash
 # 仅为 Codex 安装 guidelines 和 MCP
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent codex --guidelines --mcp
 
 # 安装所有功能并为指定 Agent 配置
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent claude_code --guidelines --skills --mcp --browser-logs
 
 # 安装时启用指定第三方包的 AI assets
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent cursor --package-module github.com/prismgo/framework
 ```
 
 ### 预览安装（不写文件）
 
 ```bash
-prismgolens install --dry-run --no-interaction
+prismgo-lens install --dry-run --no-interaction
 ```
 
 输出示例：
@@ -181,14 +181,14 @@ Prismgo Lens 自动检测并适配以下 Agent 的配置格式：
 
 ```bash
 # 交互式安装（推荐首次使用）
-prismgolens install --interactive
+prismgo-lens install --interactive
 
 # 指定 Agent 和功能
-prismgolens install --no-interaction \
+prismgo-lens install --no-interaction \
   --agent claude_code --guidelines --skills --mcp
 
 # 预览不写文件
-prismgolens install --dry-run
+prismgo-lens install --dry-run
 ```
 
 **可用选项：**
@@ -216,13 +216,13 @@ prismgolens install --dry-run
 
 ```bash
 # 重新同步所有已安装内容
-prismgolens update
+prismgo-lens update
 
 # 预览更新，不同步 skills
-prismgolens update --dry-run --ignore-skills
+prismgo-lens update --dry-run --ignore-skills
 
 # 更新并显示发现的第三方包 assets
-prismgolens update --discover
+prismgo-lens update --discover
 ```
 
 ### doctor
@@ -230,7 +230,7 @@ prismgolens update --discover
 输出检测到的项目根目录、当前可执行命令、PATH 状态和安装警告。
 
 ```bash
-prismgolens doctor
+prismgo-lens doctor
 ```
 
 ### mcp
@@ -238,7 +238,7 @@ prismgolens doctor
 启动 stdio MCP server，供 Agent 调用。
 
 ```bash
-prismgolens mcp
+prismgo-lens mcp
 ```
 
 通常由 Agent 的 MCP 配置自动调用，无需手动执行。
@@ -249,11 +249,11 @@ prismgolens mcp
 
 ```bash
 # 执行 application-info 工具（e30= 是 {} 的 base64）
-prismgolens execute-tool application-info e30=
+prismgo-lens execute-tool application-info e30=
 
 # 执行 get-config 工具，查询 app.name
 # {"key":"app.name"} 的 base64 是 eyJrZXkiOiJhcHAubmFtZSJ9
-prismgolens execute-tool get-config eyJrZXkiOiJhcHAubmFtZSJ9
+prismgo-lens execute-tool get-config eyJrZXkiOiJhcHAubmFtZSJ9
 ```
 
 ### browser-proxy
@@ -262,7 +262,7 @@ prismgolens execute-tool get-config eyJrZXkiOiJhcHAubmFtZSJ9
 
 ```bash
 # 代理到本地服务，从 8052 端口访问
-prismgolens browser-proxy \
+prismgo-lens browser-proxy \
   --target http://127.0.0.1:8051 --listen 127.0.0.1:8052
 ```
 
@@ -277,7 +277,7 @@ prismgolens browser-proxy \
 列出 `.ai/skills` 中已安装的 skills。
 
 ```bash
-prismgolens list-skills
+prismgo-lens list-skills
 ```
 
 ### add-skill
@@ -286,22 +286,22 @@ prismgolens list-skills
 
 ```bash
 # 安装本地 skill 目录
-prismgolens add-skill /path/to/local/skill
+prismgo-lens add-skill /path/to/local/skill
 
 # 从 GitHub 安装（自动审计）
-prismgolens add-skill owner/repo/path/to/skill
+prismgo-lens add-skill owner/repo/path/to/skill
 
 # 列出仓库中所有可用 skills
-prismgolens add-skill owner/repo --list
+prismgo-lens add-skill owner/repo --list
 
 # 安装指定 skill
-prismgolens add-skill owner/repo --skill skill-name
+prismgo-lens add-skill owner/repo --skill skill-name
 
 # 安装所有发现的 skills
-prismgolens add-skill owner/repo --all
+prismgo-lens add-skill owner/repo --all
 
 # 跳过审计（需要 --force 配合）
-prismgolens add-skill owner/repo --skill skill-name --force --skip-audit
+prismgo-lens add-skill owner/repo --skill skill-name --force --skip-audit
 ```
 
 ---
@@ -729,13 +729,13 @@ Prismgo Lens 提供 Skill 管理能力，Agent 可以通过 Skills 获取框架�
 
 ```bash
 # 从本地目录安装
-prismgolens add-skill ./my-custom-skill
+prismgo-lens add-skill ./my-custom-skill
 
 # 从 GitHub 安装
-prismgolens add-skill github.com/owner/repo/skills/my-skill
+prismgo-lens add-skill github.com/owner/repo/skills/my-skill
 
 # 查看仓库有哪些 skill 可选
-prismgolens add-skill github.com/owner/repo --list
+prismgo-lens add-skill github.com/owner/repo --list
 ```
 
 安装后 skill 会自动同步到所有已配置 Agent 的 skills 目录。
@@ -785,13 +785,13 @@ some-module/
 
 ```bash
 # 发现所有已依赖模块中的 AI assets
-prismgolens update --discover
+prismgo-lens update --discover
 
 # 在 .prismgo-lens.json 中启用指定模块
 # "selected_package_modules": ["github.com/prismgo/framework"]
 
 # 或安装时直接指定
-prismgolens install \
+prismgo-lens install \
   --package-module github.com/prismgo/framework
 ```
 
