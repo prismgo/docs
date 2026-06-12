@@ -5,6 +5,7 @@
   - [Configuration File](#configuration-file)
   - [Driver Prerequisites](#driver-prerequisites)
   - [Configuration Parameters](#configuration-parameters)
+  - [Symbolic Link Configuration](#symbolic-link-configuration)
   - [Disk Configuration Fields](#disk-configuration-fields)
 - [Obtaining Disk Instances](#obtaining-disk-instances)
   - [Package-Level Facade](#package-level-facade)
@@ -36,6 +37,7 @@
 - [Directories](#directories)
 - [URLs and Temporary Signed URLs](#urls-and-temporary-signed-urls)
   - [Public URLs](#public-urls)
+  - [Public Disk Symbolic Links](#public-disk-symbolic-links)
   - [Temporary Signed URLs](#temporary-signed-urls)
   - [Temporary Upload URLs](#temporary-upload-urls)
   - [Verifying Local Signed URLs](#verifying-local-signed-urls)
@@ -114,6 +116,10 @@ func init() {
                     "timeout":     config.Env("FILESYSTEM_OSS_TIMEOUT", 30),
                 },
             },
+            "links": map[string]interface{}{
+                "public/storage": "storage/app/public",
+                // "public/images": "storage/app/images",
+            },
         }
     })
 }
@@ -140,6 +146,7 @@ Requires the `github.com/aliyun/aliyun-oss-go-sdk/oss` dependency. Configure `bu
 | `filesystem.default` | `FILESYSTEM_DISK` | `"local"` | Default disk name. Package-level `filesystem.Put/Get/Exists` use this disk |
 | `filesystem.cloud` | `FILESYSTEM_CLOUD` | `"oss"` | Cloud disk alias. Used to express "current cloud storage" in business code |
 | `filesystem.temporary_url.signing_key` | `FILESYSTEM_SIGNING_KEY` | `""` (falls back to `app.key`) | Signing key for local temporary URLs |
+| `filesystem.links` | — | `{"public/storage": "storage/app/public"}` | Symbolic link mappings used by `storage:link` and `storage:unlink` |
 
 #### Local Disk
 
@@ -174,6 +181,21 @@ Requires the `github.com/aliyun/aliyun-oss-go-sdk/oss` dependency. Configure `bu
 | `filesystem.disks.oss.url` | `FILESYSTEM_OSS_URL` | `""` | OSS public URL or CDN prefix; if not configured, the URL is generated from bucket/endpoint |
 | `filesystem.disks.oss.visibility` | `FILESYSTEM_OSS_VISIBILITY` | `"private"` | OSS default visibility |
 | `filesystem.disks.oss.timeout` | `FILESYSTEM_OSS_TIMEOUT` | `30` | OSS client timeout in seconds |
+
+### Symbolic Link Configuration
+
+`filesystem.links` configures symbolic links in the public directory. Each map key is the link path to create, and each value is the target directory:
+
+```go
+"links": map[string]interface{}{
+    "public/storage": "storage/app/public",
+    "public/images":  "storage/app/images",
+},
+```
+
+Relative paths are resolved from the application base path. The default link exposes files stored in `storage/app/public` through `public/storage` for your web server.
+
+If `filesystem.links` is not configured, `storage:link` uses the default mapping: `public/storage` points to `storage/app/public`.
 
 ### Disk Configuration Fields
 
@@ -537,6 +559,57 @@ url, err := filesystem.Disk("public").URL("avatars/u1.jpg")
 ```
 
 Calling `URL` on a private disk returns `ErrPublicURLUnavailable`.
+
+### Public Disk Symbolic Links
+
+Like Laravel's public disk workflow, PrismGo's `public` disk typically writes files to `storage/app/public`. If your web server only serves the `public` directory, create a symbolic link from `public/storage` to `storage/app/public`:
+
+```bash
+go run . storage:link
+```
+
+The command reads the `filesystem.links` configuration in `config/filesystem.go`. The default application skeleton creates:
+
+```text
+public/storage -> storage/app/public
+```
+
+After the link exists, files written to the `public` disk can be accessed through `/storage`:
+
+```go
+path, err := filesystem.Disk("public").PutFile(ctx, "avatars", file)
+url, err := filesystem.Disk("public").URL(path)
+// https://example.com/storage/avatars/filename.jpg
+```
+
+To expose additional local directories, add them to `links`:
+
+```go
+"links": map[string]interface{}{
+    "public/storage": "storage/app/public",
+    "public/images":  "storage/app/images",
+},
+```
+
+`storage:link` supports two options:
+
+```bash
+# Create the symbolic link using relative paths, useful when the whole project directory may move
+go run . storage:link --relative
+
+# Recreate existing symbolic links
+go run . storage:link --force
+```
+
+`--force` only replaces existing symbolic links. If the link path is a regular file or directory, the command returns an error and leaves that path untouched.
+
+To delete the configured symbolic links:
+
+```bash
+go run . storage:unlink
+```
+
+`storage:unlink` ignores missing links and only removes symbolic links; regular files and directories are not deleted.
 
 ### Temporary Signed URLs
 

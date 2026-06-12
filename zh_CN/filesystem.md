@@ -5,6 +5,7 @@
   - [配置文件](#配置文件)
   - [驱动前置条件](#驱动前置条件)
   - [配置参数说明](#配置参数说明)
+  - [符号链接配置](#符号链接配置)
   - [磁盘配置字段说明](#磁盘配置字段说明)
 - [获取磁盘实例](#获取磁盘实例)
   - [包级 Facade](#包级-facade)
@@ -36,6 +37,7 @@
 - [目录操作](#目录操作)
 - [URL 与临时签名 URL](#url-与临时签名-url)
   - [公开 URL](#公开-url)
+  - [公开磁盘符号链接](#公开磁盘符号链接)
   - [临时签名 URL](#临时签名-url)
   - [临时上传 URL](#临时上传-url)
   - [校验本地签名 URL](#校验本地签名-url)
@@ -114,6 +116,10 @@ func init() {
                     "timeout":     config.Env("FILESYSTEM_OSS_TIMEOUT", 30),
                 },
             },
+            "links": map[string]interface{}{
+                "public/storage": "storage/app/public",
+                // "public/images": "storage/app/images",
+            },
         }
     })
 }
@@ -140,6 +146,7 @@ func init() {
 | `filesystem.default` | `FILESYSTEM_DISK` | `"local"` | 默认磁盘名称。包级 `filesystem.Put/Get/Exists` 都会使用它 |
 | `filesystem.cloud` | `FILESYSTEM_CLOUD` | `"oss"` | 云盘别名。用于业务表达"当前云存储" |
 | `filesystem.temporary_url.signing_key` | `FILESYSTEM_SIGNING_KEY` | `""`（回退 `app.key`） | 本地临时 URL 签名密钥 |
+| `filesystem.links` | — | `{"public/storage": "storage/app/public"}` | `storage:link` 与 `storage:unlink` 使用的符号链接映射 |
 
 #### Local 磁盘
 
@@ -174,6 +181,21 @@ func init() {
 | `filesystem.disks.oss.url` | `FILESYSTEM_OSS_URL` | `""` | OSS 公开 URL 或 CDN 前缀；不配置时 URL 由驱动按 bucket/endpoint 生成 |
 | `filesystem.disks.oss.visibility` | `FILESYSTEM_OSS_VISIBILITY` | `"private"` | OSS 默认可见性 |
 | `filesystem.disks.oss.timeout` | `FILESYSTEM_OSS_TIMEOUT` | `30` | OSS 客户端超时秒数 |
+
+### 符号链接配置
+
+`filesystem.links` 配置公开目录中的符号链接。键是要创建的链接位置，值是链接指向的目标目录：
+
+```go
+"links": map[string]interface{}{
+    "public/storage": "storage/app/public",
+    "public/images":  "storage/app/images",
+},
+```
+
+相对路径会按应用根目录解析。上面的默认链接会让 `storage/app/public` 下的文件可以通过 `public/storage` 暴露给 Web 服务器。
+
+如果没有配置 `filesystem.links`，`storage:link` 会使用默认映射：`public/storage` 指向 `storage/app/public`。
 
 ### 磁盘配置字段说明
 
@@ -537,6 +559,57 @@ url, err := filesystem.Disk("public").URL("avatars/u1.jpg")
 ```
 
 私有磁盘调用 `URL` 会返回 `ErrPublicURLUnavailable`。
+
+### 公开磁盘符号链接
+
+和 Laravel 的 public disk 用法一致，`public` 磁盘通常写入 `storage/app/public`。如果 Web 服务器只暴露 `public` 目录，需要创建一个从 `public/storage` 指向 `storage/app/public` 的符号链接：
+
+```bash
+go run . storage:link
+```
+
+命令会读取 `config/filesystem.go` 中的 `filesystem.links` 配置。默认骨架配置会创建：
+
+```text
+public/storage -> storage/app/public
+```
+
+创建后，写入 `public` 磁盘的文件可以通过 `/storage` 访问：
+
+```go
+path, err := filesystem.Disk("public").PutFile(ctx, "avatars", file)
+url, err := filesystem.Disk("public").URL(path)
+// https://example.com/storage/avatars/filename.jpg
+```
+
+如果需要公开多个本地目录，可以在 `links` 中增加映射：
+
+```go
+"links": map[string]interface{}{
+    "public/storage": "storage/app/public",
+    "public/images":  "storage/app/images",
+},
+```
+
+`storage:link` 支持两个选项：
+
+```bash
+# 使用相对路径创建符号链接，适合项目目录可能整体迁移的部署环境
+go run . storage:link --relative
+
+# 重新创建已经存在的符号链接
+go run . storage:link --force
+```
+
+`--force` 只会替换已经存在的符号链接。如果链接位置是普通文件或目录，命令会返回错误并保留原路径，避免覆盖用户文件。
+
+删除这些配置过的符号链接：
+
+```bash
+go run . storage:unlink
+```
+
+`storage:unlink` 会忽略不存在的链接，也只会删除符号链接；普通文件或目录不会被删除。
 
 ### 临时签名 URL
 
