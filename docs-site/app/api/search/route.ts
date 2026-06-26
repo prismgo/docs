@@ -1,7 +1,7 @@
 import { createSearchAPI } from 'fumadocs-core/search/server';
 import { source } from '@/lib/source';
 
-export const { GET } = createSearchAPI('advanced', {
+export const { staticGET: GET } = createSearchAPI('advanced', {
   indexes: source.getPages().map((page) => ({
     title: page.data.title,
     structuredData: page.data.structuredData,
@@ -9,3 +9,5 @@ export const { GET } = createSearchAPI('advanced', {
     url: page.url,
   })),
 });
+
+export const dynamic = 'force-static';

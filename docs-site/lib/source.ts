@@ -1,9 +1,10 @@
+import { createMDXSource } from 'fumadocs-mdx';
 import { loader } from 'fumadocs-core/source';
 import { docs, meta } from '@/.source';
 import { i18n } from './i18n';
 
 export const source = loader({
   baseUrl: '/docs',
-  source: { docs, meta },
+  source: createMDXSource(docs, meta),
   i18n,
 });

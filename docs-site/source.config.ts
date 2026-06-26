@@ -1,7 +1,7 @@
 import { defineDocs, defineConfig } from 'fumadocs-mdx/config';
 import { z } from 'zod';
 
-export const docs = defineDocs({
+export const { docs, meta } = defineDocs({
   dir: 'content/docs',
   docs: {
     schema: z.object({

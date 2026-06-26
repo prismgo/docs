@@ -6,6 +6,15 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'PrismGo Documentation',
   description: 'PrismGo - Comprehensive documentation',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/logo.png',
+  },
+  openGraph: {
+    title: 'PrismGo Documentation',
+    description: 'PrismGo - Comprehensive documentation',
+    images: '/logo.png',
+  },
 };
 
 export default function Layout({
