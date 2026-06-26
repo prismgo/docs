@@ -1,0 +1,48 @@
+name: Sync docs from main to web
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Extract docs from main
+        run: |
+          mkdir -p /tmp/main-docs
+          cp -r zh_CN /tmp/main-docs/zh-CN
+          cp -r en /tmp/main-docs/en
+
+      - name: Checkout web branch
+        run: git checkout web
+
+      - name: Sync docs to web branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 清空旧文档
+          rm -rf docs-site/content/docs/*
+
+          # 复制新文档
+          cp -r /tmp/main-docs/zh-CN docs-site/content/docs/zh-CN
+          cp -r /tmp/main-docs/en docs-site/content/docs/en
+
+          # 提交
+          git add docs-site/content/docs/
+          git commit -m "chore: sync docs from main tag ${{ github.ref_name }}"
+          git push origin web
+
+          # 创建 web 分支对应的 tag
+          git tag -f web-${{ github.ref_name }}
+          git push origin web-${{ github.ref_name }} --force
