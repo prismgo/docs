@@ -5,13 +5,9 @@ import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const params = source.generateParams();
-  const hasRoot = params.some(
-    (p: { slug?: string[] }) => !p.slug || p.slug.length === 0,
+  return params.filter(
+    (p: { slug?: string[] }) => p.slug && p.slug.length > 0,
   );
-  if (!hasRoot) {
-    params.unshift({ slug: [], lang: i18n.defaultLanguage });
-  }
-  return params;
 }
 
 export async function generateMetadata({
@@ -46,12 +42,8 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  // For static export: render default locale's starter page directly at root
-  const resolvedSlug = !slug || slug.length === 0
-    ? [i18n.defaultLanguage, 'starter']
-    : slug;
-
-  const page = source.getPage(resolvedSlug);
+  // Root route is handled by app/page.tsx
+  const page = source.getPage(slug ?? []);
   if (!page) notFound();
 
   const MDX = page.data.body;
