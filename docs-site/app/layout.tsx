@@ -4,16 +4,17 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://prismgo.github.io'),
   title: 'PrismGo Documentation',
   description: 'PrismGo - Comprehensive documentation',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/logo.png',
+    icon: '/docs/favicon.ico',
+    apple: '/docs/logo.png',
   },
   openGraph: {
     title: 'PrismGo Documentation',
     description: 'PrismGo - Comprehensive documentation',
-    images: '/logo.png',
+    images: '/docs/logo.png',
   },
 };
 

@@ -4,17 +4,15 @@ import type { ReactNode } from 'react';
 
 export default function Layout({
   children,
-  params,
 }: {
   children: ReactNode;
-  params: Promise<{ lang?: string }>;
 }) {
   return (
     <DocsLayout
       tree={source.getPageTree()}
       nav={{
         title: 'PrismGo Docs',
-        url: '/docs',
+        url: '/',
       }}
       sidebar={{
         defaultOpenLevel: 1,
