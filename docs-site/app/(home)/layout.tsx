@@ -1,4 +1,3 @@
-import { source } from '@/lib/source';
 import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import type { ReactNode } from 'react';
 

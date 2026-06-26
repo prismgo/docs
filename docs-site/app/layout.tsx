@@ -23,7 +23,7 @@ export default function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
       <body className="bg-background text-foreground antialiased">
         <RootProvider>{children}</RootProvider>
       </body>
