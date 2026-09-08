@@ -29,7 +29,7 @@
 
 ---
 
-PrismGo 的数据库组件基于 GORM 提供数据库连接管理、迁移注册和索引维护等能力。当前内置 MySQL 驱动支持，采用 Laravel 风格的配置结构，通过 ServiceProvider 实现延迟连接和自动关闭。
+PrismGo 的数据库组件基于 GORM 提供数据库连接管理、迁移注册和索引维护等能力。当前内置 MySQL 与 SQLite 驱动支持，采用 Laravel 风格的配置结构，通过 ServiceProvider 实现延迟连接和自动关闭。
 
 迁移和填充命令的完整参数见 [命令行：数据库迁移命令](commands.md#数据库迁移命令)。
 
@@ -57,6 +57,10 @@ func init() {
         return map[string]interface{}{
             "default": config.Env("DATABASE_CONNECTION", "mysql"),
             "connections": map[string]interface{}{
+				"sqlite": map[string]interface{}{
+					"driver":   "sqlite",
+					"database": config.Env("SQLITE_DATABASE", "storage/database.sqlite"),
+				},
                 "mysql": map[string]interface{}{
                     "driver":             config.Env("DATABASE_DRIVER", "mysql"),
                     "host":               config.Env("DATABASE_HOST", "127.0.0.1"),
@@ -83,9 +87,13 @@ func init() {
 
 #### MySQL
 
-当前唯一内置的数据库驱动。底层使用 `go-sql-driver/mysql` 和 `gorm.io/driver/mysql`。无需额外配置，只要 MySQL 服务可达且账号密码正确即可连接。
+底层使用 `go-sql-driver/mysql` 和 `gorm.io/driver/mysql`。无需额外配置，只要 MySQL 服务可达且账号密码正确即可连接。
 
-> 如需扩展 SQLite / PostgreSQL 等驱动，可在 `Open` 函数中新增同名 DSN 构造器并添加分支。
+#### SQLite
+
+底层使用纯 Go SQLite 驱动，无需运行外部数据库服务。`database` 可填写数据库文件路径，也可使用 `file::memory:?cache=shared` 这类 SQLite DSN；适合本地开发和 Hermetic 测试。
+
+> PostgreSQL、SQL Server 等其他驱动尚未内置，传入未知驱动名会立即返回错误。
 
 ### 配置参数说明
 
@@ -99,7 +107,7 @@ func init() {
 
 | 参数路径 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `database.connections.mysql.driver` | `DATABASE_DRIVER` | `"mysql"` | 数据库驱动类型，目前仅支持 `"mysql"` |
+| `database.connections.mysql.driver` | `DATABASE_DRIVER` | `"mysql"` | 数据库驱动类型 |
 | `database.connections.mysql.host` | `DATABASE_HOST` | `"127.0.0.1"` | 数据库主机地址 |
 | `database.connections.mysql.port` | `DATABASE_PORT` | `3306` | 数据库端口号 |
 | `database.connections.mysql.database` | `DATABASE_NAME` | `"workorder"` | 数据库名称 |
@@ -113,6 +121,13 @@ func init() {
 | `database.connections.mysql.max_idle_conns` | `DATABASE_MAX_IDLE_CONNS` | `10` | 最大空闲连接数 |
 | `database.connections.mysql.conn_max_lifetime` | `DATABASE_CONN_MAX_LIFETIME` | `"1h"` | 连接最大存活时间，支持持续时间文本（如 `"1h"`、`"30m"`）或秒数字符串（如 `"3600"`） |
 | `database.connections.mysql.conn_max_idle_time` | `DATABASE_CONN_MAX_IDLE_TIME` | `"10m"` | 连接最大空闲时间，格式同上 |
+
+#### SQLite 连接配置
+
+| 参数路径 | 环境变量 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `database.connections.sqlite.driver` | — | `"sqlite"` | SQLite 驱动名，也接受 `"sqlite3"` |
+| `database.connections.sqlite.database` | `SQLITE_DATABASE` | `"storage/database.sqlite"` | SQLite 文件路径或 DSN |
 
 ### 使用 DSN 连接
 
@@ -159,13 +174,22 @@ if err != nil {
 也可以使用底层 `Open` 函数，直接指定驱动和 DSN：
 
 ```go
-db, err := database.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local")
+db, err := database.Open(
+    "mysql",
+    "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local",
+    database.MySQLConfig{},
+)
+if err != nil {
+    return err
+}
+
+sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{})
 if err != nil {
     return err
 }
 ```
 
-> `Open` 目前仅支持 `"mysql"` 驱动，传入其他驱动名会立即返回错误。
+> `Open` 支持 `"mysql"`、`"sqlite"` 和 `"sqlite3"`；传入其他驱动名会立即返回错误。
 
 ### 连接池管理
 

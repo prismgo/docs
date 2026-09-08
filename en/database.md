@@ -29,7 +29,7 @@
 
 ---
 
-PrismGo's database component provides database connection management, migration registration, and index maintenance capabilities built on top of GORM. It currently ships with built-in MySQL driver support, follows a Laravel-style configuration structure, and implements lazy connection creation and automatic cleanup through the ServiceProvider.
+PrismGo's database component provides database connection management, migration registration, and index maintenance capabilities built on top of GORM. It ships with built-in MySQL and SQLite driver support, follows a Laravel-style configuration structure, and implements lazy connection creation and automatic cleanup through the ServiceProvider.
 
 For full migration and seeding command options, see [Commands: Database Migration Commands](commands.md#database-migration-commands).
 
@@ -57,6 +57,10 @@ func init() {
         return map[string]interface{}{
             "default": config.Env("DATABASE_CONNECTION", "mysql"),
             "connections": map[string]interface{}{
+				"sqlite": map[string]interface{}{
+					"driver":   "sqlite",
+					"database": config.Env("SQLITE_DATABASE", "storage/database.sqlite"),
+				},
                 "mysql": map[string]interface{}{
                     "driver":             config.Env("DATABASE_DRIVER", "mysql"),
                     "host":               config.Env("DATABASE_HOST", "127.0.0.1"),
@@ -83,9 +87,13 @@ func init() {
 
 #### MySQL
 
-The only built-in database driver at this time. It uses `go-sql-driver/mysql` and `gorm.io/driver/mysql` under the hood. No additional configuration is needed as long as the MySQL server is reachable and the credentials are correct.
+This driver uses `go-sql-driver/mysql` and `gorm.io/driver/mysql` under the hood. No additional configuration is needed as long as the MySQL server is reachable and the credentials are correct.
 
-> To add support for SQLite, PostgreSQL, or other drivers, add a same-name DSN constructor and a new branch in the `Open` function.
+#### SQLite
+
+This driver uses a pure-Go SQLite implementation and does not require an external database service. The `database` value may be a file path or a SQLite DSN such as `file::memory:?cache=shared`, making it suitable for local development and hermetic tests.
+
+> PostgreSQL, SQL Server, and other drivers are not built in. Unknown driver names return an error immediately.
 
 ### Configuration Parameters
 
@@ -99,7 +107,7 @@ The only built-in database driver at this time. It uses `go-sql-driver/mysql` an
 
 | Parameter Path | Environment Variable | Default | Description |
 | --- | --- | --- | --- |
-| `database.connections.mysql.driver` | `DATABASE_DRIVER` | `"mysql"` | Database driver type; currently only `"mysql"` is supported |
+| `database.connections.mysql.driver` | `DATABASE_DRIVER` | `"mysql"` | Database driver type |
 | `database.connections.mysql.host` | `DATABASE_HOST` | `"127.0.0.1"` | Database host address |
 | `database.connections.mysql.port` | `DATABASE_PORT` | `3306` | Database port number |
 | `database.connections.mysql.database` | `DATABASE_NAME` | `"workorder"` | Database name |
@@ -113,6 +121,13 @@ The only built-in database driver at this time. It uses `go-sql-driver/mysql` an
 | `database.connections.mysql.max_idle_conns` | `DATABASE_MAX_IDLE_CONNS` | `10` | Maximum number of idle connections |
 | `database.connections.mysql.conn_max_lifetime` | `DATABASE_CONN_MAX_LIFETIME` | `"1h"` | Maximum connection lifetime; supports duration text (e.g., `"1h"`, `"30m"`) or seconds as a string (e.g., `"3600"`) |
 | `database.connections.mysql.conn_max_idle_time` | `DATABASE_CONN_MAX_IDLE_TIME` | `"10m"` | Maximum connection idle time; same format as above |
+
+#### SQLite Connection Configuration
+
+| Parameter Path | Environment Variable | Default | Description |
+| --- | --- | --- | --- |
+| `database.connections.sqlite.driver` | — | `"sqlite"` | SQLite driver name; `"sqlite3"` is also accepted |
+| `database.connections.sqlite.database` | `SQLITE_DATABASE` | `"storage/database.sqlite"` | SQLite file path or DSN |
 
 ### Connecting via DSN
 
@@ -159,13 +174,22 @@ if err != nil {
 You can also use the low-level `Open` function to specify the driver and DSN directly:
 
 ```go
-db, err := database.Open("mysql", "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local")
+db, err := database.Open(
+    "mysql",
+    "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local",
+    database.MySQLConfig{},
+)
+if err != nil {
+    return err
+}
+
+sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{})
 if err != nil {
     return err
 }
 ```
 
-> `Open` currently only supports the `"mysql"` driver. Passing any other driver name returns an error immediately.
+> `Open` supports `"mysql"`, `"sqlite"`, and `"sqlite3"`. Any other driver name returns an error immediately.
 
 ### Connection Pool Management
 
