@@ -60,7 +60,7 @@ func main() {
 
 2. **默认框架提供者被添加到仓库中。** `redis`、`cache`、`queue`、`cookie`、`session`、`filesystem`、`database`、`schema` 和 `route` 的提供者按依赖顺序添加。此时它们只是被排入队列；它们的 `Register` 和 `Boot` 方法尚未执行。
 
-3. **扩展提供者被添加。** 通过 `WithExtensionProviders(...)` 声明的第三方或可选模块 Provider 被追加到框架默认 Provider 之后。扩展因此可以注册数据库、队列或文件系统驱动，同时仍可依赖框架核心绑定。
+3. **扩展提供者被添加。** 通过 `WithExtensionProviders(...)` 声明的第三方或可选模块 Provider 被追加到框架默认 Provider 之后。扩展因此可以注册数据库、队列或文件系统驱动，同时仍可依赖框架核心绑定；例如 `oss.ServiceProvider{}` 会在 Boot 时向当前 Application 的 filesystem Manager 注册惰性 driver factory。
 
 4. **你的应用提供者被添加。** `bootstrap/providers.go` 返回并通过 `WithProviders(...)` 声明的提供者被追加到扩展提供者之后，这样业务 Provider 可以安全地依赖或覆盖框架与扩展绑定。
 

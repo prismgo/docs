@@ -49,7 +49,7 @@
   - [DriverFactoryContext Fields](#driverfactorycontext-fields)
 - [Manual Initialization](#manual-initialization)
 - [Error Constants](#error-constants)
-- [Built-in Driver Capability Matrix](#built-in-driver-capability-matrix)
+- [Driver Capability Matrix](#driver-capability-matrix)
 - [Laravel Filesystem Mapping](#laravel-filesystem-mapping)
 - [Best Practices](#best-practices)
 
@@ -65,13 +65,13 @@ All operations explicitly accept `context.Context`, file paths use disk-relative
 
 The filesystem uses a `Manager` to manage multiple disks, each exposing read/write operations through a `Repository`. Business code can use package-level facades (e.g., `filesystem.Put`, `filesystem.Get`) directly, or obtain a specific disk's `Repository` instance via `filesystem.Disk("public")`.
 
-Built-in disks:
+The default configuration contains these disks. The framework includes the `local` driver, while the optional extension provides the `oss` driver:
 
 | Disk | Default Driver | Default Visibility | Use Case |
 | --- | --- | --- | --- |
 | `local` | `local` | `private` | Private attachments, import/export temp files, files requiring signed access |
 | `public` | `local` | `public` | Avatars, covers, work order scene images, public attachments |
-| `oss` | `oss` | `private` | Alibaba Cloud OSS, object storage, CDN scenarios |
+| `oss` | `oss` (extension required) | `private` | Alibaba Cloud OSS, object storage, CDN scenarios |
 
 ## Configuration
 
@@ -135,7 +135,27 @@ Public files are served via `GET /storage/*path`; temporary signed files are ser
 
 #### OSS
 
-Requires the `github.com/aliyun/aliyun-oss-go-sdk/oss` dependency. Configure `bucket`, `endpoint`, `access_key`, and `secret_key` to get started. The OSS driver natively supports temporary signed URLs and temporary upload URLs.
+The OSS driver has moved out of the framework core into the optional `github.com/prismgo/oss` extension. Install the module and register it between framework default providers and application providers:
+
+```bash
+go get github.com/prismgo/oss
+```
+
+```go
+import (
+    "github.com/prismgo/framework/foundation"
+    ossext "github.com/prismgo/oss"
+)
+
+app := foundation.Configure().
+    WithExtensionProviders(ossext.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+The extension's `Register` method creates no resources. During `Boot`, it only installs the `oss` driver factory on the current Application's filesystem Manager. The OSS client and bucket are created lazily when an operation first uses `filesystem.Disk("oss")`, and the Manager owns their lifecycle. Configuring `driver: "oss"` without installing the extension makes disk operations return `filesystem.ErrUnsupportedDriver`.
+
+Configure `bucket`, `endpoint`, `access_key`, and `secret_key` to get started. The extension uses the Aliyun OSS SDK and natively supports temporary signed and upload URLs; the framework core no longer has a static dependency on that SDK.
 
 ### Configuration Parameters
 
@@ -631,7 +651,7 @@ supports := filesystem.Disk("local").ProvidesTemporaryURLs()
 
 The expiry time for `TemporaryURL` is an absolute time. Too short and the URL may expire before the user clicks it; too long and the access window after a leak widens. Common values are 5 to 30 minutes.
 
-Local disks require `serve=true` and a configured signing key to generate temporary URLs. The OSS driver always supports them.
+Local disks require `serve=true` and a configured signing key to generate temporary URLs. After the OSS extension is installed, its driver always supports them.
 
 ### Temporary Upload URLs
 
@@ -716,7 +736,7 @@ Notes:
 
 ## OSS Driver
 
-The OSS driver uses `github.com/aliyun/aliyun-oss-go-sdk/oss`. Once configured, business code still uses the same `Disk` API.
+The `github.com/prismgo/oss` extension provides the OSS driver and uses `github.com/aliyun/aliyun-oss-go-sdk/oss` internally. After installing and registering `oss.ServiceProvider{}`, business code continues to use the same `filesystem.Disk` API without depending directly on the extension implementation.
 
 Common switching approach:
 
@@ -774,7 +794,7 @@ Notes:
 
 - Empty driver names or nil factories are ignored; re-registering with the same name overwrites the previous factory.
 - Configuring an unregistered driver returns `ErrUnsupportedDriver` when the disk is actually accessed.
-- Custom drivers are lazily initialized and cached per disk, just like built-in drivers; `Manager.Close()` calls `Close()` on all created drivers.
+- Custom drivers, the built-in local driver, and the optional OSS driver are lazily initialized and cached per disk; `Manager.Close()` calls `Close()` on all created drivers.
 
 ### Driver Interface
 
@@ -889,7 +909,9 @@ defer closeFunc()
 | `filesystem.ErrEmptyDirectory` | Destructive directory deletion received an empty directory argument, preventing accidental root deletion |
 | `filesystem.ErrInvalidUploadFile` | Upload file parameter is nil or cannot be opened as a multipart file |
 
-## Built-in Driver Capability Matrix
+## Driver Capability Matrix
+
+`local` is built into the framework; the `oss` column describes capabilities after installing the `github.com/prismgo/oss` extension.
 
 | Capability | local | oss |
 | --- | --- | --- |

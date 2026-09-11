@@ -49,7 +49,7 @@
   - [DriverFactoryContext 字段说明](#driverfactorycontext-字段说明)
 - [手动初始化](#手动初始化)
 - [错误常量](#错误常量)
-- [内置驱动能力矩阵](#内置驱动能力矩阵)
+- [驱动能力矩阵](#驱动能力矩阵)
 - [与 Laravel Filesystem 的对应关系](#与-laravel-filesystem-的对应关系)
 - [使用建议](#使用建议)
 
@@ -65,13 +65,13 @@
 
 文件系统以 `Manager` 管理多个磁盘（disk），每个磁盘通过 `Repository` 暴露读写操作。业务代码可以直接使用包级 facade（如 `filesystem.Put`、`filesystem.Get`），也可以通过 `filesystem.Disk("public")` 获取指定磁盘的 `Repository` 实例。
 
-内置磁盘：
+默认配置包含以下磁盘；`local` 驱动由框架内置，`oss` 驱动由可选扩展提供：
 
 | 磁盘 | 默认驱动 | 默认可见性 | 用途 |
 | --- | --- | --- | --- |
 | `local` | `local` | `private` | 私有附件、导入导出临时文件、需要签名访问的文件 |
 | `public` | `local` | `public` | 头像、封面、工单现场图片、公开附件 |
-| `oss` | `oss` | `private` | 阿里云 OSS、对象存储、CDN 场景 |
+| `oss` | `oss`（需安装扩展） | `private` | 阿里云 OSS、对象存储、CDN 场景 |
 
 ## 配置
 
@@ -135,7 +135,27 @@ func init() {
 
 #### OSS
 
-需要 `github.com/aliyun/aliyun-oss-go-sdk/oss` 依赖。配置 `bucket`、`endpoint`、`access_key`、`secret_key` 后即可使用。OSS 驱动原生支持临时签名 URL 和临时上传 URL。
+OSS 驱动已经从框架核心拆分为 `github.com/prismgo/oss` 可选扩展。安装模块并在框架默认 Provider 与业务 Provider 之间注册：
+
+```bash
+go get github.com/prismgo/oss
+```
+
+```go
+import (
+    "github.com/prismgo/framework/foundation"
+    ossext "github.com/prismgo/oss"
+)
+
+app := foundation.Configure().
+    WithExtensionProviders(ossext.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+扩展的 `Register` 不创建资源；`Boot` 只向当前 Application 的 filesystem Manager 注册 `oss` driver factory。OSS Client 和 Bucket 会在首次调用 `filesystem.Disk("oss")` 的实际操作时惰性创建，并由 Manager 生命周期统一管理。未安装扩展却配置 `driver: "oss"` 时，磁盘操作会返回 `filesystem.ErrUnsupportedDriver`。
+
+配置 `bucket`、`endpoint`、`access_key`、`secret_key` 后即可使用。扩展内部使用 Aliyun OSS SDK，并原生支持临时签名 URL 和临时上传 URL；框架核心不再静态依赖该 SDK。
 
 ### 配置参数说明
 
@@ -631,7 +651,7 @@ supports := filesystem.Disk("local").ProvidesTemporaryURLs()
 
 `TemporaryURL` 的过期时间是绝对时间。过短会导致用户点击下载时已经失效，过长会扩大泄露后的访问窗口。常见取值是 5 到 30 分钟。
 
-本地磁盘需要 `serve=true` 且 `signing_key` 已配置才能生成临时 URL。OSS 驱动始终支持。
+本地磁盘需要 `serve=true` 且 `signing_key` 已配置才能生成临时 URL。安装 OSS 扩展后，OSS 驱动始终支持。
 
 ### 临时上传 URL
 
@@ -716,7 +736,7 @@ visibility, err := disk.GetVisibility(ctx, "avatars/u1.jpg")
 
 ## OSS 驱动
 
-OSS 驱动使用 `github.com/aliyun/aliyun-oss-go-sdk/oss`。配置完整后，业务代码仍然使用同一套 `Disk` API。
+OSS 驱动由 `github.com/prismgo/oss` 扩展提供，扩展内部使用 `github.com/aliyun/aliyun-oss-go-sdk/oss`。安装并注册 `oss.ServiceProvider{}` 后，业务代码仍然使用同一套 `filesystem.Disk` API，不直接依赖扩展实现。
 
 常见切换方式：
 
@@ -774,7 +794,7 @@ cfg := filesystem.Config{
 
 - 空 driver 名或 nil factory 会被忽略；同名注册会覆盖先前 factory。
 - 配置了未注册 driver 时，实际访问磁盘会返回 `ErrUnsupportedDriver`。
-- 自定义 driver 和内置 driver 一样按磁盘惰性初始化并缓存；`Manager.Close()` 会调用已创建 driver 的 `Close()`。
+- 自定义 driver、内置 local driver 和可选 OSS driver 都按磁盘惰性初始化并缓存；`Manager.Close()` 会调用已创建 driver 的 `Close()`。
 
 ### Driver 接口
 
@@ -889,7 +909,9 @@ defer closeFunc()
 | `filesystem.ErrEmptyDirectory` | 破坏性目录删除收到空目录参数，防止误删根目录 |
 | `filesystem.ErrInvalidUploadFile` | 上传文件参数为空，或无法作为 multipart 文件打开 |
 
-## 内置驱动能力矩阵
+## 驱动能力矩阵
+
+`local` 是框架内置驱动；`oss` 列描述安装 `github.com/prismgo/oss` 扩展后的能力。
 
 | 能力 | local | oss |
 | --- | --- | --- |
