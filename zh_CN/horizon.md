@@ -631,6 +631,8 @@ Horizon 通过 collector 监听 queue 事件并聚合为 event_metrics 窗口。
 go run ./ horizon:snapshot
 ```
 
+`horizon:snapshot` 会等待调用开始前 collector 已接受的事件完成聚合，再持久化本次快照；因此无需通过额外延时来等待后台 collector。
+
 清理指标：
 
 ```bash

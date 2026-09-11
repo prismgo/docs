@@ -631,6 +631,8 @@ Manually generate a snapshot:
 go run ./ horizon:snapshot
 ```
 
+`horizon:snapshot` waits for events already accepted by the collector before the command invocation to finish aggregation before persisting the snapshot. No additional delay is needed to wait for the background collector.
+
 Clear metrics:
 
 ```bash
