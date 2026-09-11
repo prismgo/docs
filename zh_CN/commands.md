@@ -189,6 +189,8 @@ go run . stub:publish --force
 
 生产环境保护由 `app.env` / `APP_ENV` 驱动。生产环境执行会修改数据的命令时，必须显式传 `--force`。
 
+使用 SQLite 时必须先安装并注册 `github.com/prismgo/sqlite` 扩展。`migrate:fresh` 会通过当前连接的 Dialector 删除 SQLite 视图（传 `--drop-views` 时）和所有用户表，再执行迁移；命令入口和选项与 MySQL 相同。
+
 ## 队列命令
 
 | 命令 | 说明 |
