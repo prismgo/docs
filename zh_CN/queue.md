@@ -43,14 +43,14 @@
 - [加密 Payload](#加密-payload)
 - [自定义驱动](#自定义驱动)
 - [错误常量](#错误常量)
-- [内置连接能力矩阵](#内置连接能力矩阵)
+- [连接能力矩阵](#连接能力矩阵)
 - [Laravel Queue 映射](#laravel-queue-映射)
 
 ---
 
 ## 简介
 
-`github.com/prismgo/framework/queue` 是 Laravel Queue 风格的 Go 队列组件，用于把耗时、可重试、可延迟的任务从主请求流程中拆出来异步执行。
+`github.com/prismgo/framework/queue` 是 Laravel Queue 风格的 Go 队列组件，用于把耗时、可重试、可延迟的任务从主请求流程中拆出来异步执行。框架内置 `sync` 与 `redis` transport；RabbitMQ 由独立模块 `github.com/prismgo/rabbitmq` 提供。
 
 队列 worker、失败任务和重启命令的完整参数见 [命令行：队列命令](commands.md#队列命令)。
 
@@ -79,7 +79,26 @@
 | --- | --- | --- |
 | `sync` | 无额外依赖 | 测试、本地开发、无需后台 Worker 的简单场景 |
 | `redis` | 需要 `github.com/prismgo/framework/redis` 包已注册连接池 | 生产环境后台消费 |
-| `rabbitmq` | 需要 RabbitMQ 服务可用 | 使用 AMQP 后端的生产环境 |
+| `rabbitmq` | 安装 `github.com/prismgo/rabbitmq` 扩展，并提供可用的 RabbitMQ 服务 | 使用 AMQP 后端的生产环境 |
+
+### 安装 RabbitMQ 扩展
+
+```bash
+go get github.com/prismgo/rabbitmq
+```
+
+在 framework 默认 Provider 与业务 Provider 之间注册扩展：
+
+```go
+import "github.com/prismgo/rabbitmq"
+
+app := foundation.Configure().
+    WithExtensionProviders(rabbitmq.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+`Boot` 只向当前 Application 的 Queue Manager 注册 connector，不会立即建立 AMQP 连接；首次解析 RabbitMQ connection 时才连接 broker。升级后若仍配置 `driver: "rabbitmq"` 却未安装扩展，Queue Manager 会返回 unknown driver 错误。
 
 ## 配置
 
@@ -1287,7 +1306,7 @@ func (c MyConnector) Connect(_ context.Context, name string, config map[string]a
 | `ErrRabbitMQPublishUnrouted` | Mandatory 发布未路由到任何队列 |
 | `ErrRabbitMQReleaseRepublishFailed` | Release 替换发布失败 |
 
-## 内置连接能力矩阵
+## 连接能力矩阵
 
 | 能力 | sync | redis | rabbitmq |
 | --- | --- | --- | --- |

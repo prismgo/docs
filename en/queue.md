@@ -43,14 +43,14 @@
 - [Encrypted Payloads](#encrypted-payloads)
 - [Custom Drivers](#custom-drivers)
 - [Error Constants](#error-constants)
-- [Built-in Connection Capability Matrix](#built-in-connection-capability-matrix)
+- [Connection Capability Matrix](#connection-capability-matrix)
 - [Laravel Queue Mapping](#laravel-queue-mapping)
 
 ---
 
 ## Introduction
 
-PrismGo's queue component provides a unified, Laravel-style queue abstraction over multiple backend transports (sync, Redis, RabbitMQ). Business code dispatches jobs through the `queue` facade; a long-running worker process consumes and executes them.
+PrismGo's queue component provides a unified, Laravel-style queue abstraction over multiple backend transports. The framework includes the sync and Redis transports; RabbitMQ is provided by the separate `github.com/prismgo/rabbitmq` module. Business code dispatches jobs through the `queue` facade; a long-running worker process consumes and executes them.
 
 For full worker, failed-job, and restart command options, see [Commands: Queue Commands](commands.md#queue-commands).
 
@@ -70,7 +70,26 @@ The default connection is set by `QUEUE_CONNECTION`. The default queue name is s
 |--------|-------------|
 | `sync` | None — jobs execute immediately in the current goroutine |
 | `redis` | A running Redis server; the `github.com/prismgo/framework/redis` package configured |
-| `rabbitmq` | A running RabbitMQ broker; the `amqp091-go` client library |
+| `rabbitmq` | The `github.com/prismgo/rabbitmq` extension and a running RabbitMQ broker |
+
+### Installing the RabbitMQ Extension
+
+```bash
+go get github.com/prismgo/rabbitmq
+```
+
+Register the extension between PrismGo's default providers and your application providers:
+
+```go
+import "github.com/prismgo/rabbitmq"
+
+app := foundation.Configure().
+    WithExtensionProviders(rabbitmq.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+`Boot` only registers the connector on the current Application's Queue Manager; it does not open an AMQP connection. The broker connection is created when the application first resolves a RabbitMQ connection. After upgrading, configuring `driver: "rabbitmq"` without installing the extension returns an unknown driver error.
 
 ## Configuration
 
@@ -1196,7 +1215,7 @@ The queue package exports sentinel errors for programmatic matching with `errors
 | `ErrRabbitMQPublishUnrouted` | Mandatory publish unrouted |
 | `ErrRabbitMQReleaseRepublishFailed` | Release republish failed after ack |
 
-## Built-in Connection Capability Matrix
+## Connection Capability Matrix
 
 | Feature | `sync` | `redis` | `rabbitmq` |
 |---------|--------|---------|------------|
