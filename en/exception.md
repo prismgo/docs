@@ -474,7 +474,7 @@ The following framework modules use `exception.Report()` to report exceptions in
 | `github.com/prismgo/framework/kernel` | CLI command panic recovery and execution error reporting |
 | `github.com/prismgo/framework/routine` | Safe goroutine panic recovery and error reporting |
 | `github.com/prismgo/framework/queue` | Queue job final failure reporting |
-| `github.com/prismgo/framework/horizon` | Supervisor/worker runtime error reporting |
+| `github.com/prismgo/horizon` | Supervisor/worker runtime error reporting |
 | `github.com/prismgo/framework/event` | Event listener panic/error reporting |
 
 In non-HTTP paths, `status` defaults to 500 and `fields` are provided by the caller.

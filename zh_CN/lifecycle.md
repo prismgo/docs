@@ -60,7 +60,7 @@ func main() {
 
 2. **默认框架提供者被添加到仓库中。** `redis`、`cache`、`queue`、`cookie`、`session`、`filesystem`、`database`、`schema` 和 `route` 的提供者按依赖顺序添加。此时它们只是被排入队列；它们的 `Register` 和 `Boot` 方法尚未执行。
 
-3. **扩展提供者被添加。** 通过 `WithExtensionProviders(...)` 声明的第三方或可选模块 Provider 被追加到框架默认 Provider 之后。扩展因此可以注册数据库、队列或文件系统驱动，同时仍可依赖框架核心绑定；例如 `oss.ServiceProvider{}` 会在 Boot 时向当前 Application 的 filesystem Manager 注册惰性 driver factory。
+3. **扩展提供者被添加。** 通过 `WithExtensionProviders(...)` 声明的第三方或可选模块 Provider 被追加到框架默认 Provider 之后。扩展因此可以依赖框架核心绑定；例如 `oss.ServiceProvider{}` 会注册惰性 filesystem driver factory，`horizon.ServiceProvider{}` 会注册 `horizon.manager` 和 Horizon 命令，但都不会在 Provider 注册期间连接外部服务。
 
 4. **你的应用提供者被添加。** `bootstrap/providers.go` 返回并通过 `WithProviders(...)` 声明的提供者被追加到扩展提供者之后，这样业务 Provider 可以安全地依赖或覆盖框架与扩展绑定。
 
@@ -107,7 +107,7 @@ func (ServiceProvider) Boot(providerApplication) error {
 
 基本上，Prismgo 提供的每一个主要功能都是由服务提供者来启动引导和配置的。由于它们启动引导和配置了框架提供的如此多的功能，服务提供者是整个 Prismgo 启动流程中最重要的部分。
 
-Provider 的稳定分层顺序是：框架默认 Provider → 扩展 Provider → 业务 Provider。同一顺序同时用于 Register 和 Boot，关闭期的 Terminable Provider 则按反序执行。第三方驱动等扩展使用 `WithExtensionProviders(...)`；应用业务能力使用 `WithProviders(...)`。
+Provider 的稳定分层顺序是：框架默认 Provider → 扩展 Provider → 业务 Provider。同一顺序同时用于 Register 和 Boot，关闭期的 Terminable Provider 则按反序执行。第三方驱动和 Horizon 等可选模块使用 `WithExtensionProviders(...)`；应用业务能力使用 `WithProviders(...)`。
 
 #### 延迟提供者
 

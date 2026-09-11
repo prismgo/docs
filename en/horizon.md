@@ -53,13 +53,33 @@ Horizon's state is separate from queue messages. Queue messages are still manage
 
 ## Installation
 
-Use the `horizon:install` command to generate the configuration file and service provider stubs:
+Horizon is an independent optional module. Install it first:
+
+```bash
+go get github.com/prismgo/horizon@latest
+```
+
+Then register its package provider in the Builder's extension layer:
+
+```go
+import (
+    "github.com/prismgo/framework/foundation"
+    "github.com/prismgo/horizon"
+)
+
+app := foundation.Configure(basePath...).
+    WithExtensionProviders(horizon.ServiceProvider{}).
+    WithProviders(Providers()...).
+    Create()
+```
+
+`horizon.ServiceProvider` runs Register and Boot after the framework defaults and before application providers; registration does not connect to Redis or RabbitMQ. Then use `horizon:install` to generate the configuration file and application-provider stub:
 
 ```bash
 go run ./ horizon:install
 ```
 
-This command creates `config/horizon.go` and `app/providers/horizon_service_provider.go` only when they don't already exist; existing files are never overwritten. After installation, you need to manually register `horizon.ServiceProvider{}` in `bootstrap/provider.go`.
+This command creates `config/horizon.go` and `app/providers/horizon_service_provider.go` only when they don't already exist; existing files are never overwritten. Add the generated `app/providers.HorizonServiceProvider{}` to the application-provider list returned by `bootstrap/provider.go` so it can mount Dashboard routes and application authorization. It has a different responsibility from the package extension provider above.
 
 Dashboard assets are embedded in the binary, so no additional publish step is required.
 

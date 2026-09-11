@@ -204,13 +204,14 @@ func Providers() []provider.ServiceProvider {
 }
 ```
 
-框架默认提供者——`redis`、`cache`、`queue`、`cookie`、`session`、`filesystem`、`database`、`schema` 和 `route`——由 `foundation.Builder` 自动前置加载，因此你不需要在 `bootstrap/provider.go` 中列出它们。你的应用提供者加载在框架默认提供者之后，这意味着你的提供者可以安全地依赖和覆盖任何框架绑定。
+框架默认提供者——`redis`、`cache`、`queue`、`cookie`、`session`、`filesystem`、`database`、`schema` 和 `route`——由 `foundation.Builder` 自动前置加载，因此你不需要在 `bootstrap/provider.go` 中列出它们。Horizon 等独立扩展通过 `WithExtensionProviders(...)` 注册；应用 Provider 继续由 `WithProviders(Providers()...)` 注册。
 
 完整的提供者加载顺序是：
 
 1. **基础提供者**（立即注册）：`event` → `config` → `logger` → `translation`
 2. **默认提供者**（在 `Boot()` 期间注册）：`redis` → `cache` → `queue` → `cookie` → `session` → `filesystem` → `database` → `schema` → `route`
-3. **你的应用提供者**（在 `Boot()` 期间注册）：按 `bootstrap/provider.go` 返回的顺序
+3. **扩展提供者**（在 `Boot()` 期间注册）：按 `WithExtensionProviders(...)` 的声明顺序，例如 `horizon.ServiceProvider{}`
+4. **你的应用提供者**（在 `Boot()` 期间注册）：按 `bootstrap/provider.go` 返回的顺序
 
 #### 提供者标识
 

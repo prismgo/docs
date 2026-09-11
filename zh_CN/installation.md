@@ -5,6 +5,7 @@
 - [创建应用](#创建应用)
 - [项目创建选项](#项目创建选项)
 - [初始配置](#初始配置)
+- [从内置 Horizon 升级](#从内置-horizon-升级)
 - [下一步](#下一步)
 
 ## 服务器要求
@@ -126,6 +127,17 @@ go run . key:generate
 APP_ENV=production
 APP_DEBUG=false
 ```
+
+## 从内置 Horizon 升级
+
+Horizon 已迁移到独立 module。升级使用 Horizon 的既有应用时：
+
+1. 运行 `go get github.com/prismgo/horizon@latest`。
+2. 把 `github.com/prismgo/framework/horizon` 和 `github.com/prismgo/framework/horizon/cmd` import 分别改为 `github.com/prismgo/horizon` 和 `github.com/prismgo/horizon/cmd`。
+3. 在 Application Builder 中通过 `WithExtensionProviders(horizon.ServiceProvider{})` 注册扩展。
+4. 运行 `go mod tidy` 并执行应用测试。
+
+旧 import path 不提供兼容 shim；命令名、`horizon.*` 配置、Dashboard/API 和 `horizon.manager` 容器键保持不变。完整安装与 Provider 分工见 [Horizon](horizon.md#安装)。
 
 ## 下一步
 
