@@ -60,7 +60,7 @@ The bootstrap phase performs these tasks in order:
 
 2. **Default framework providers are added to the repository.** The providers for `redis`, `cache`, `queue`, `cookie`, `session`, `filesystem`, `database`, `schema`, and `route` are added in dependency order. At this point they are only queued; their `Register` and `Boot` methods have not yet run.
 
-3. **Extension providers are added.** Third-party or optional module providers declared through `WithExtensionProviders(...)` are appended after the framework defaults. Extensions can therefore register database, queue, or filesystem drivers while depending on core framework bindings; for example, `oss.ServiceProvider{}` installs a lazy driver factory on the current Application's filesystem Manager during Boot.
+3. **Extension providers are added.** Third-party or optional module providers declared through `WithExtensionProviders(...)` are appended after the framework defaults and can depend on core bindings. For example, `oss.ServiceProvider{}` registers a lazy filesystem driver factory, while `horizon.ServiceProvider{}` registers `horizon.manager` and Horizon commands; neither connects to an external service during provider registration.
 
 4. **Your application's providers are added.** Providers returned by `bootstrap/providers.go` and declared through `WithProviders(...)` are appended after extension providers, so business providers can safely depend on or override framework and extension bindings.
 
@@ -107,7 +107,7 @@ After both phases complete for all eager providers, Prismgo dispatches the `app.
 
 Essentially every major feature offered by Prismgo is bootstrapped and configured by a service provider. Since they bootstrap and configure so many features offered by the framework, service providers are the most important aspect of the entire Prismgo bootstrap process.
 
-The stable provider layering is: framework defaults → extension providers → application providers. Register and Boot both use this order; terminable providers run in reverse order during shutdown. Use `WithExtensionProviders(...)` for extensions such as third-party drivers, and `WithProviders(...)` for application business capabilities.
+The stable provider layering is: framework defaults → extension providers → application providers. Register and Boot both use this order; terminable providers run in reverse order during shutdown. Use `WithExtensionProviders(...)` for optional modules such as third-party drivers and Horizon, and `WithProviders(...)` for application business capabilities.
 
 #### Deferred Providers
 

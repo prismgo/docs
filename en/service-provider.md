@@ -202,13 +202,14 @@ func Providers() []provider.ServiceProvider {
 }
 ```
 
-Framework default providers — for `redis`, `cache`, `queue`, `cookie`, `session`, `filesystem`, `database`, `schema`, and `route` — are automatically prepended by the `foundation.Builder`, so you do not need to list them in `bootstrap/provider.go`. Your application's providers are loaded after the framework defaults, which means your providers can safely depend on and override any framework binding.
+Framework default providers — for `redis`, `cache`, `queue`, `cookie`, `session`, `filesystem`, `database`, `schema`, and `route` — are automatically prepended by the `foundation.Builder`, so you do not need to list them in `bootstrap/provider.go`. Independent extensions such as Horizon are registered with `WithExtensionProviders(...)`; application providers continue to use `WithProviders(Providers()...)`.
 
 The complete provider loading order is:
 
 1. **Base providers** (registered immediately): `event` → `config` → `logger` → `translation`
 2. **Default providers** (registered during `Boot()`): `redis` → `cache` → `queue` → `cookie` → `session` → `filesystem` → `database` → `schema` → `route`
-3. **Your application providers** (registered during `Boot()`): in the order returned by `bootstrap/provider.go`
+3. **Extension providers** (registered during `Boot()`): in the order declared by `WithExtensionProviders(...)`, for example `horizon.ServiceProvider{}`
+4. **Your application providers** (registered during `Boot()`): in the order returned by `bootstrap/provider.go`
 
 #### Provider Identity
 

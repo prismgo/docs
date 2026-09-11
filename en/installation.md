@@ -5,6 +5,7 @@
 - [Creating an Application](#creating-an-application)
 - [Project Creation Options](#project-creation-options)
 - [Initial Configuration](#initial-configuration)
+- [Upgrading from Built-in Horizon](#upgrading-from-built-in-horizon)
 - [Next Steps](#next-steps)
 
 ## Server Requirements
@@ -126,6 +127,17 @@ Production environments must disable debug mode:
 APP_ENV=production
 APP_DEBUG=false
 ```
+
+## Upgrading from Built-in Horizon
+
+Horizon has moved to an independent module. For an existing application that uses Horizon:
+
+1. Run `go get github.com/prismgo/horizon@latest`.
+2. Replace `github.com/prismgo/framework/horizon` and `github.com/prismgo/framework/horizon/cmd` imports with `github.com/prismgo/horizon` and `github.com/prismgo/horizon/cmd` respectively.
+3. Register the extension through `WithExtensionProviders(horizon.ServiceProvider{})` on the Application Builder.
+4. Run `go mod tidy` and your application tests.
+
+There is no compatibility shim for the old import paths. Command names, `horizon.*` configuration, Dashboard/API behavior, and the `horizon.manager` container key remain unchanged. See [Horizon](horizon.md#installation) for the complete installation and provider responsibilities.
 
 ## Next Steps
 

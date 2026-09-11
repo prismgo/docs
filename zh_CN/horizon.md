@@ -53,13 +53,33 @@ Horizon 的状态与队列消息分离。队列消息仍由 `github.com/prismgo/
 
 ## 安装
 
-使用 `horizon:install` 命令生成配置文件和服务提供者桩文件：
+Horizon 是独立的可选 module。先安装依赖：
+
+```bash
+go get github.com/prismgo/horizon@latest
+```
+
+然后在应用 Builder 的扩展层注册包级 Provider：
+
+```go
+import (
+    "github.com/prismgo/framework/foundation"
+    "github.com/prismgo/horizon"
+)
+
+app := foundation.Configure(basePath...).
+    WithExtensionProviders(horizon.ServiceProvider{}).
+    WithProviders(Providers()...).
+    Create()
+```
+
+`horizon.ServiceProvider` 在框架默认 Provider 之后、业务 Provider 之前执行 Register 和 Boot；注册过程不会连接 Redis 或 RabbitMQ。随后使用 `horizon:install` 命令生成配置文件和应用 Provider 桩文件：
 
 ```bash
 go run ./ horizon:install
 ```
 
-该命令会在文件不存在时创建 `config/horizon.go` 和 `app/providers/horizon_service_provider.go`，已存在的文件不会被覆盖。安装完成后，需要手动在 `bootstrap/provider.go` 中注册 `horizon.ServiceProvider{}`。
+该命令会在文件不存在时创建 `config/horizon.go` 和 `app/providers/horizon_service_provider.go`，已存在的文件不会被覆盖。把生成的 `app/providers.HorizonServiceProvider{}` 加入 `bootstrap/provider.go` 返回的业务 Provider 列表，用于挂载 Dashboard 路由和应用鉴权；它与上面的包级扩展 Provider 职责不同。
 
 Dashboard 资源已内嵌到二进制中，无需额外的 publish 步骤。
 

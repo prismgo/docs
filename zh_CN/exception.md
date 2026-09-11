@@ -473,7 +473,7 @@ type ResponseRenderer func(c *gin.Context, err error) bool
 | `github.com/prismgo/framework/kernel` | CLI 命令 panic 恢复和执行错误上报 |
 | `github.com/prismgo/framework/routine` | 安全协程 panic 恢复和错误上报 |
 | `github.com/prismgo/framework/queue` | 队列任务最终失败后上报 |
-| `github.com/prismgo/framework/horizon` | supervisor/worker 运行时错误上报 |
+| `github.com/prismgo/horizon` | supervisor/worker 运行时错误上报 |
 | `github.com/prismgo/framework/event` | 事件监听器 panic/错误上报 |
 
 非 HTTP 路径中 `status` 默认为 500，`fields` 由调用方提供。
