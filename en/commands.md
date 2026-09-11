@@ -189,6 +189,8 @@ Common options:
 
 Production protection is driven by `app.env` / `APP_ENV`. In production, commands that modify data require `--force`.
 
+SQLite requires the `github.com/prismgo/sqlite` extension to be installed and registered first. `migrate:fresh` delegates object removal to the active Dialector: for SQLite it drops views when `--drop-views` is supplied, drops all user tables, and then runs migrations. The command and its options are otherwise the same as for MySQL.
+
 ## Queue Commands
 
 | Command | Description |

@@ -56,12 +56,14 @@
 
 ## 简介
 
-PrismGo 的 `database/schema` 包提供了 Laravel 风格的 Schema 构造器，用于在 Go 迁移中声明数据库表结构。它构建在 GORM 之上，开箱支持两种数据库方言：
+PrismGo 的 `database/schema` 包提供了 Laravel 风格的 Schema 构造器，用于在 Go 迁移中声明数据库表结构。它构建在 GORM 之上，通过 GORM Dialector 携带可选方言能力：
 
-- **MySQL** — 生产主路径方言
-- **SQLite** — 测试/开发兼容方言
+- **MySQL** — framework 核心内置的生产主路径方言
+- **SQLite** — 安装 `github.com/prismgo/sqlite` 后可用的测试/开发方言
 
-不支持的方言会返回 `schema.ErrUnsupportedFeature`，防止生成未经验证的 SQL。
+未安装 SQLite 扩展，或 Dialector 未提供对应能力时，操作会返回 `schema.ErrUnsupportedFeature`，防止生成未经验证的 SQL。扩展安装方式见[数据库：SQLite](database.md#sqlite)。安装后 `schema.New(db)`、`schema.Bind(db)` 与全部迁移调用方式保持不变。
+
+SQLite schema 迁移必须串行执行。SQLite 的外键 PRAGMA 与 attached database 仅作用于单个物理连接，且不支持并发 schema 变更。直接调用约束开关或检查 attached schema 时，应使用 `db.Connection`，并基于该固定连接创建 Schema 构造器。
 
 Schema 构造器适用于：
 

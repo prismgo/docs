@@ -56,12 +56,14 @@
 
 ## Introduction
 
-PrismGo's `database/schema` package provides a Laravel-style Schema Builder for declaring database table structures in Go migrations. It is built on top of GORM and supports two dialects out of the box:
+PrismGo's `database/schema` package provides a Laravel-style Schema Builder for declaring database table structures in Go migrations. It is built on top of GORM, with optional dialect capabilities carried by the GORM Dialector:
 
-- **MySQL** — production primary dialect
-- **SQLite** — test/development compatibility
+- **MySQL** — the production-primary dialect built into the framework core
+- **SQLite** — a test/development dialect available after installing `github.com/prismgo/sqlite`
 
-Unsupported dialects return `schema.ErrUnsupportedFeature` to prevent generating unverified SQL.
+When the SQLite extension is not installed, or a Dialector does not provide the required capability, the operation returns `schema.ErrUnsupportedFeature` to prevent generating unverified SQL. See [Database: SQLite](database.md#sqlite) for installation. Once installed, `schema.New(db)`, `schema.Bind(db)`, and migration calls remain unchanged.
+
+SQLite schema migrations must run serially. SQLite foreign-key PRAGMAs and attached databases are physical-connection scoped, and concurrent schema changes are not supported. Use `db.Connection` and create the Schema builder from that pinned connection when calling constraint toggles or inspecting an attached schema.
 
 The Schema Builder is ideal for:
 

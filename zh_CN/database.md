@@ -108,6 +108,8 @@ app := foundation.Configure().
 
 扩展底层使用纯 Go SQLite 驱动，无需运行外部数据库服务。`database` 可填写数据库文件路径，也可使用 `file::memory:?cache=shared` 这类 SQLite DSN；适合本地开发和 Hermetic 测试。未注册扩展时使用 `sqlite` 或 `sqlite3` 会返回 `database: driver "sqlite" is not registered`。
 
+扩展不仅注册连接驱动，也承载 SQLite 的 Schema 方言能力，包括 Blueprint 编译、Schema/表/视图/外键元数据、外键检查开关、复合索引以及 `migrate:fresh` 所需的对象清理。安装扩展后仍使用统一的 `database.Open`、`schema.New(db)` / `schema.Bind(db)` 和迁移命令；应用代码不需要改用扩展专属 facade。框架核心的模块依赖图不包含 SQLite 驱动。
+
 > PostgreSQL、SQL Server 等其他驱动尚未内置，传入未知驱动名会立即返回错误。
 
 ### 配置参数说明

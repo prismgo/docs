@@ -108,6 +108,8 @@ app := foundation.Configure().
 
 The extension uses a pure-Go SQLite implementation and does not require an external database service. The `database` value may be a file path or a SQLite DSN such as `file::memory:?cache=shared`, making it suitable for local development and hermetic tests. Without the extension, using `sqlite` or `sqlite3` returns `database: driver "sqlite" is not registered`.
 
+The extension also carries SQLite's Schema dialect capabilities: Blueprint compilation, schema/table/view/foreign-key metadata, foreign-key check toggles, composite indexes, and the object cleanup required by `migrate:fresh`. Once installed, applications continue to use the shared `database.Open`, `schema.New(db)` / `schema.Bind(db)`, and migration command APIs; there is no extension-specific facade. The framework core dependency graph contains no SQLite driver.
+
 > PostgreSQL, SQL Server, and other drivers are not built in. Unknown driver names return an error immediately.
 
 ### Configuration Parameters
