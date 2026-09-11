@@ -29,7 +29,7 @@
 
 ---
 
-PrismGo's database component provides database connection management, migration registration, and index maintenance capabilities built on top of GORM. It ships with built-in MySQL and SQLite driver support, follows a Laravel-style configuration structure, and implements lazy connection creation and automatic cleanup through the ServiceProvider.
+PrismGo's database component provides database connection management, migration registration, and index maintenance capabilities built on top of GORM. The framework includes the MySQL driver; SQLite is supplied by the separate `github.com/prismgo/sqlite` extension. The component follows a Laravel-style configuration structure and implements lazy connection creation and automatic cleanup through the ServiceProvider.
 
 For full migration and seeding command options, see [Commands: Database Migration Commands](commands.md#database-migration-commands).
 
@@ -91,7 +91,22 @@ This driver uses `go-sql-driver/mysql` and `gorm.io/driver/mysql` under the hood
 
 #### SQLite
 
-This driver uses a pure-Go SQLite implementation and does not require an external database service. The `database` value may be a file path or a SQLite DSN such as `file::memory:?cache=shared`, making it suitable for local development and hermetic tests.
+SQLite has moved out of the framework core into a separate extension. Install the module and place its extension provider between the framework defaults and your application providers:
+
+```bash
+go get github.com/prismgo/sqlite
+```
+
+```go
+import sqliteext "github.com/prismgo/sqlite"
+
+app := foundation.Configure().
+    WithExtensionProviders(sqliteext.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+The extension uses a pure-Go SQLite implementation and does not require an external database service. The `database` value may be a file path or a SQLite DSN such as `file::memory:?cache=shared`, making it suitable for local development and hermetic tests. Without the extension, using `sqlite` or `sqlite3` returns `database: driver "sqlite" is not registered`.
 
 > PostgreSQL, SQL Server, and other drivers are not built in. Unknown driver names return an error immediately.
 
@@ -171,10 +186,11 @@ if err != nil {
 }
 ```
 
-You can also use the low-level `Open` function to specify the driver and DSN directly:
+You can also use `Manager.Open` to specify a registered driver and DSN directly. Inside an application, the `database.Open` facade uses the Manager owned by the current application:
 
 ```go
-db, err := database.Open(
+manager := database.NewManager()
+db, err := manager.Open(
     "mysql",
     "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local",
     database.MySQLConfig{},
@@ -183,13 +199,13 @@ if err != nil {
     return err
 }
 
-sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{})
+sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{}) // SQLite extension required
 if err != nil {
     return err
 }
 ```
 
-> `Open` supports `"mysql"`, `"sqlite"`, and `"sqlite3"`. Any other driver name returns an error immediately.
+> The core Manager registers only `"mysql"` by default. Extensions can register or replace application-local drivers through `Manager.Extend`; `github.com/prismgo/sqlite` registers `"sqlite"` and `"sqlite3"`.
 
 ### Connection Pool Management
 
@@ -519,7 +535,7 @@ if database.SameColumns(currentPK, targetPK) {
 
 ## Service Provider
 
-`ServiceProvider` registers the default database connection as a lazy factory in the application container. The `Register` phase only declares the factory; it does not open a GORM connection upfront. Configuration or connection errors are surfaced when the connection is later resolved:
+`ServiceProvider` registers the application-local `database.manager` and the default database connection as lazy factories in the application container. The `Register` phase only declares factories; it does not open a GORM connection upfront. Configuration or connection errors are surfaced when the connection is later resolved. Driver registrations and connection caches are isolated between Application instances:
 
 ```go
 // Register in bootstrap/app.go

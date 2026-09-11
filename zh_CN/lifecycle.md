@@ -60,9 +60,11 @@ func main() {
 
 2. **默认框架提供者被添加到仓库中。** `redis`、`cache`、`queue`、`cookie`、`session`、`filesystem`、`database`、`schema` 和 `route` 的提供者按依赖顺序添加。此时它们只是被排入队列；它们的 `Register` 和 `Boot` 方法尚未执行。
 
-3. **你的应用提供者被添加。** `bootstrap/providers.go` 返回的提供者被追加到框架默认提供者之后，这样你的提供者可以安全地依赖和覆盖框架绑定。
+3. **扩展提供者被添加。** 通过 `WithExtensionProviders(...)` 声明的第三方或可选模块 Provider 被追加到框架默认 Provider 之后。扩展因此可以注册数据库、队列或文件系统驱动，同时仍可依赖框架核心绑定。
 
-4. **异常处理器被构建。** Prismgo 构建默认的[异常处理器](/docs/{{version}}/exception)，包括恢复、日志记录和 panic 堆栈记录，然后将其注册到容器中。
+4. **你的应用提供者被添加。** `bootstrap/providers.go` 返回并通过 `WithProviders(...)` 声明的提供者被追加到扩展提供者之后，这样业务 Provider 可以安全地依赖或覆盖框架与扩展绑定。
+
+5. **异常处理器被构建。** Prismgo 构建默认的[异常处理器](/docs/{{version}}/exception)，包括恢复、日志记录和 panic 堆栈记录，然后将其注册到容器中。
 
 此时 `Application` 对象已经完全组装完毕，但除了基础提供者外，没有任何提供者执行了它们的生命周期方法。真正的工作在 `Boot()` 被调用时才开始。
 
@@ -105,7 +107,7 @@ func (ServiceProvider) Boot(providerApplication) error {
 
 基本上，Prismgo 提供的每一个主要功能都是由服务提供者来启动引导和配置的。由于它们启动引导和配置了框架提供的如此多的功能，服务提供者是整个 Prismgo 启动流程中最重要的部分。
 
-虽然框架内部使用了一组默认服务提供者，你也可以选择创建自己的。你可以在 `bootstrap/provider.go` 文件中找到你的应用正在使用的用户定义或第三方服务提供者列表。
+Provider 的稳定分层顺序是：框架默认 Provider → 扩展 Provider → 业务 Provider。同一顺序同时用于 Register 和 Boot，关闭期的 Terminable Provider 则按反序执行。第三方驱动等扩展使用 `WithExtensionProviders(...)`；应用业务能力使用 `WithProviders(...)`。
 
 #### 延迟提供者
 

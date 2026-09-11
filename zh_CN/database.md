@@ -29,7 +29,7 @@
 
 ---
 
-PrismGo 的数据库组件基于 GORM 提供数据库连接管理、迁移注册和索引维护等能力。当前内置 MySQL 与 SQLite 驱动支持，采用 Laravel 风格的配置结构，通过 ServiceProvider 实现延迟连接和自动关闭。
+PrismGo 的数据库组件基于 GORM 提供数据库连接管理、迁移注册和索引维护等能力。框架内置 MySQL 驱动；SQLite 由独立的 `github.com/prismgo/sqlite` 扩展提供。组件采用 Laravel 风格的配置结构，通过 ServiceProvider 实现延迟连接和自动关闭。
 
 迁移和填充命令的完整参数见 [命令行：数据库迁移命令](commands.md#数据库迁移命令)。
 
@@ -91,7 +91,22 @@ func init() {
 
 #### SQLite
 
-底层使用纯 Go SQLite 驱动，无需运行外部数据库服务。`database` 可填写数据库文件路径，也可使用 `file::memory:?cache=shared` 这类 SQLite DSN；适合本地开发和 Hermetic 测试。
+SQLite 已从框架核心拆分为独立扩展。安装模块并把扩展 Provider 放在框架默认 Provider 与业务 Provider 之间：
+
+```bash
+go get github.com/prismgo/sqlite
+```
+
+```go
+import sqliteext "github.com/prismgo/sqlite"
+
+app := foundation.Configure().
+    WithExtensionProviders(sqliteext.ServiceProvider{}).
+    WithProviders(applicationProviders...).
+    Create()
+```
+
+扩展底层使用纯 Go SQLite 驱动，无需运行外部数据库服务。`database` 可填写数据库文件路径，也可使用 `file::memory:?cache=shared` 这类 SQLite DSN；适合本地开发和 Hermetic 测试。未注册扩展时使用 `sqlite` 或 `sqlite3` 会返回 `database: driver "sqlite" is not registered`。
 
 > PostgreSQL、SQL Server 等其他驱动尚未内置，传入未知驱动名会立即返回错误。
 
@@ -171,10 +186,11 @@ if err != nil {
 }
 ```
 
-也可以使用底层 `Open` 函数，直接指定驱动和 DSN：
+也可以使用 `Manager.Open` 直接指定已注册的驱动和 DSN；应用内的 `database.Open` facade 会使用当前应用持有的 Manager：
 
 ```go
-db, err := database.Open(
+manager := database.NewManager()
+db, err := manager.Open(
     "mysql",
     "root:secret@tcp(127.0.0.1:3306)/app?charset=utf8mb4&parseTime=true&loc=Local",
     database.MySQLConfig{},
@@ -183,13 +199,13 @@ if err != nil {
     return err
 }
 
-sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{})
+sqliteDB, err := database.Open("sqlite", "storage/testing.sqlite", database.MySQLConfig{}) // 需先注册 SQLite 扩展
 if err != nil {
     return err
 }
 ```
 
-> `Open` 支持 `"mysql"`、`"sqlite"` 和 `"sqlite3"`；传入其他驱动名会立即返回错误。
+> 核心 Manager 默认只注册 `"mysql"`。扩展可以通过 `Manager.Extend` 注册或替换应用局部的驱动；`github.com/prismgo/sqlite` 注册 `"sqlite"` 和 `"sqlite3"`。
 
 ### 连接池管理
 
@@ -519,7 +535,7 @@ if database.SameColumns(currentPK, targetPK) {
 
 ## 服务提供者
 
-`ServiceProvider` 把默认数据库连接以延迟工厂的形式注册到应用容器。`Register` 阶段只声明工厂，不提前打开 GORM 连接，配置或连接错误由后续严格 Resolve 暴露：
+`ServiceProvider` 把应用局部的 `database.manager` 和默认数据库连接以延迟工厂的形式注册到应用容器。`Register` 阶段只声明工厂，不提前打开 GORM 连接，配置或连接错误由后续严格 Resolve 暴露。每个 Application 的驱动注册与连接缓存彼此隔离：
 
 ```go
 // 在 bootstrap/app.go 中注册
