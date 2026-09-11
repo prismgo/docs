@@ -60,7 +60,7 @@ The bootstrap phase performs these tasks in order:
 
 2. **Default framework providers are added to the repository.** The providers for `redis`, `cache`, `queue`, `cookie`, `session`, `filesystem`, `database`, `schema`, and `route` are added in dependency order. At this point they are only queued; their `Register` and `Boot` methods have not yet run.
 
-3. **Extension providers are added.** Third-party or optional module providers declared through `WithExtensionProviders(...)` are appended after the framework defaults. Extensions can therefore register database, queue, or filesystem drivers while depending on core framework bindings.
+3. **Extension providers are added.** Third-party or optional module providers declared through `WithExtensionProviders(...)` are appended after the framework defaults. Extensions can therefore register database, queue, or filesystem drivers while depending on core framework bindings; for example, `oss.ServiceProvider{}` installs a lazy driver factory on the current Application's filesystem Manager during Boot.
 
 4. **Your application's providers are added.** Providers returned by `bootstrap/providers.go` and declared through `WithProviders(...)` are appended after extension providers, so business providers can safely depend on or override framework and extension bindings.
 
