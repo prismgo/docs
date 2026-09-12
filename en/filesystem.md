@@ -565,7 +565,7 @@ allDirs, err := disk.AllDirectories(ctx, "uploads")
 err = disk.DeleteDirectory(ctx, "uploads/images")
 ```
 
-List methods return disk-relative paths, not local absolute paths. Passing an empty string to `DeleteDirectory` returns `ErrEmptyDirectory` to prevent accidental deletion of the root directory.
+List methods return disk-relative paths, not local absolute paths. On local disks, `AllDirectories` includes nested empty directories. Passing an empty string to `DeleteDirectory` returns `ErrEmptyDirectory` to prevent accidental deletion of the root directory.
 
 ## URLs and Temporary Signed URLs
 

@@ -565,7 +565,7 @@ allDirs, err := disk.AllDirectories(ctx, "uploads")
 err = disk.DeleteDirectory(ctx, "uploads/images")
 ```
 
-列表返回的都是磁盘内相对路径，不包含本地绝对路径。`DeleteDirectory` 传入空字符串会返回 `ErrEmptyDirectory`，防止误删根目录。
+列表返回的都是磁盘内相对路径，不包含本地绝对路径。在本地磁盘上，`AllDirectories` 也会包含递归层级中的空目录。`DeleteDirectory` 传入空字符串会返回 `ErrEmptyDirectory`，防止误删根目录。
 
 ## URL 与临时签名 URL
 
