@@ -29,7 +29,7 @@ If you use a compiled binary, replace `go run .` with your binary name.
 | `go run . list make` | Filter by namespace |
 | `go run . list --format=json` | Output JSON |
 | `go run . list --format=md` | Output Markdown |
-| `go run . list --raw` | Print raw command names only |
+| `go run . list --raw` | Print ungrouped raw command names and descriptions |
 | `go run . help migrate` | Show help for one command |
 
 ## HTTP Server Commands

@@ -29,7 +29,7 @@ go run . migrate
 | `go run . list make` | 按命名空间筛选 |
 | `go run . list --format=json` | 以 JSON 输出 |
 | `go run . list --format=md` | 以 Markdown 输出 |
-| `go run . list --raw` | 只输出原始命令名 |
+| `go run . list --raw` | 以无分组的原始行输出命令名和说明 |
 | `go run . help migrate` | 查看单个命令帮助 |
 
 ## HTTP 服务命令
