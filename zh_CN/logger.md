@@ -489,4 +489,4 @@ defer manager.Close()
 
 ### 与全局 logrus 的关系
 
-应用代码应直接使用 `logger.*` Facade 或注入 `*logger.Manager`。全局的 `logrus.StandardLogger()` 被配置为一个钩子，将调用路由到默认通道，确保迁移期间已有的 `logrus.*` 调用可以向后兼容。新代码不应继续扩散对全局 `logrus` 的依赖。
+应用代码应直接使用 `logger.*` Facade 或注入 `*logger.Manager`。全局的 `logrus.StandardLogger()` 被配置为一个钩子，将调用路由到默认通道，确保迁移期间已有的 `logrus.*` 调用可以向后兼容。新代码不应继续扩散对全局 `logrus` 的依赖。日志 Manager 首次从应用容器解析时安装该钩子；默认通道仍延迟到首次写入时创建。应用关闭时会移除对应 Manager 的桥接。

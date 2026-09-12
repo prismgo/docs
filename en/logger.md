@@ -489,4 +489,4 @@ Always ensure `Close()` is called during application shutdown (typically handled
 
 ### Relationship with Global logrus
 
-Application code should use the `logger.*` facade or inject a `*logger.Manager` directly. The global `logrus.StandardLogger()` is configured as a hook that routes calls to the default channel, ensuring backward compatibility for existing `logrus.*` calls during migration. New code should not expand the use of the global `logrus` logger.
+Application code should use the `logger.*` facade or inject a `*logger.Manager` directly. The global `logrus.StandardLogger()` is configured as a hook that routes calls to the default channel, ensuring backward compatibility for existing `logrus.*` calls during migration. New code should not expand the use of the global `logrus` logger. The hook is installed when the application first resolves the logger Manager; the default channel is still created on its first write. Application shutdown detaches that Manager from the bridge.
