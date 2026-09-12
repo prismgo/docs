@@ -217,7 +217,7 @@ Worker 选项：
 | `--backoff=` | `0` | 重试退避秒数，支持逗号分隔 |
 | `--max-jobs=` | `0` | 处理指定数量后退出；`0` 表示不限制 |
 | `--max-time=` | `0` | 运行指定秒数后退出；`0` 表示不限制 |
-| `--retry-after=` | `90` | Redis reserved 任务重新可见秒数 |
+| `--retry-after=` | `90` | 当前 Redis Worker 的 reserved 任务重新可见秒数，覆盖连接配置 |
 
 ## 定时任务命令
 

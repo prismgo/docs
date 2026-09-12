@@ -217,7 +217,7 @@ Worker options:
 | `--backoff=` | `0` | Retry backoff seconds, comma-separated |
 | `--max-jobs=` | `0` | Exit after N jobs; `0` means unlimited |
 | `--max-time=` | `0` | Exit after N seconds; `0` means unlimited |
-| `--retry-after=` | `90` | Redis reserved-job visibility timeout |
+| `--retry-after=` | `90` | Redis reserved-job visibility timeout for this worker; overrides the connection setting |
 
 ## Scheduler Command
 
