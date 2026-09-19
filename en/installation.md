@@ -14,7 +14,7 @@ PrismGo applications require:
 
 | Tool | Requirement | Purpose |
 | --- | --- | --- |
-| Go | 1.25+ | Install the installer, compile the app, run `go mod tidy`, and run tests |
+| Go | 1.26+ | Install the installer, compile the app, run `go mod tidy`, and run tests |
 | Git | Available | Fetch the official application skeleton from `github.com/prismgo/prismgo` |
 | Network | GitHub access | Required while creating a new application |
 

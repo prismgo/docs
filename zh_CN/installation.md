@@ -14,7 +14,7 @@ PrismGo 应用需要：
 
 | 工具 | 要求 | 用途 |
 | --- | --- | --- |
-| Go | 1.25+ | 安装 installer、编译应用、运行 `go mod tidy` 和测试 |
+| Go | 1.26+ | 安装 installer、编译应用、运行 `go mod tidy` 和测试 |
 | Git | 可用 | 拉取官方应用骨架 `github.com/prismgo/prismgo` |
 | 网络 | 可访问 GitHub | 创建新项目时获取应用骨架 |
 
